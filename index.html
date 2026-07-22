@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curso · Analista de Alta Performance — Thiago Barbosa</title>
+<meta name="description" content="Curso completo baseado no livro Analista de Alta Performance, Volume 1: mentalidade, SQL, JOINs e ETL.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://thiagorgb-maker.github.io/curso-analista-alta-performance/">
+<meta property="og:title" content="Analista de Alta Performance — Curso Gratuito">
+<meta property="og:description" content="Mentalidade analítica, SQL completo, JOINs profissionais e ETL. Curso completo e gratuito baseado no livro de Thiago Barbosa.">
+<meta property="og:image" content="https://thiagorgb-maker.github.io/curso-analista-alta-performance/capa.jpeg">
+<meta property="og:image:width" content="1500">
+<meta property="og:image:height" content="2400">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Analista de Alta Performance — Curso Gratuito">
+<meta name="twitter:description" content="Mentalidade analítica, SQL completo, JOINs profissionais e ETL. Curso completo e gratuito.">
+<meta name="twitter:image" content="https://thiagorgb-maker.github.io/curso-analista-alta-performance/capa.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --navy-950: #05070d; --navy-900: #0a0f1c; --navy-800: #0f1830; --navy-700: #16213f;
+    --line: #1e2b4d; --blue: #3d8bff; --blue-bright: #6fb1ff; --cyan: #4fe0d0;
+    --text: #e8ecf7; --muted: #8b96b8; --white: #ffffff; --radius: 14px;
+    --sidebar-w: 300px; --topbar-h: 60px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--navy-950); color: var(--text); font-family:'Inter', sans-serif; line-height:1.65;
+  }
+  h1,h2,h3,h4{ font-family:'Space Grotesk', sans-serif; }
+  code, .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{ color: var(--blue-bright); }
+  img{ max-width:100%; display:block; }
+
+  /* Topbar */
+  .topbar{
+    position:fixed; top:0; left:0; right:0; height:var(--topbar-h); z-index:60;
+    background: rgba(5,7,13,0.92); backdrop-filter: blur(10px); border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:16px; padding:0 20px;
+  }
+  .menu-toggle{
+    display:none; background:none; border:1px solid var(--line); color:var(--text);
+    font-size:18px; width:38px; height:38px; border-radius:8px; cursor:pointer;
+  }
+  .topbar-title{ font-size:12px; color:var(--muted); letter-spacing:.06em; white-space:nowrap; }
+  .progress-wrap{ display:flex; align-items:center; gap:12px; margin-left:auto; }
+  .progress-track{ width:160px; height:6px; background:var(--navy-700); border-radius:100px; overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background: linear-gradient(90deg, var(--blue), var(--cyan)); transition: width .3s ease; }
+  .progress-label{ font-size:12px; color:var(--muted); white-space:nowrap; }
+
+  /* Layout */
+  .app{ display:flex; padding-top:var(--topbar-h); min-height:100vh; }
+  .sidebar{
+    width:var(--sidebar-w); flex-shrink:0; border-right:1px solid var(--line);
+    position:fixed; top:var(--topbar-h); bottom:0; left:0; overflow-y:auto; background: var(--navy-900);
+  }
+  .sidebar-inner{ padding:20px 14px 60px; }
+  .nav-group{ margin-bottom:20px; }
+  .nav-group-title{
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+    color: var(--blue-bright); padding:8px 12px 6px;
+  }
+  .nav-list{ list-style:none; }
+  .nav-link{
+    display:block; padding:9px 12px; border-radius:8px; font-size:13.5px; color:var(--muted);
+    text-decoration:none; line-height:1.4;
+  }
+  .nav-link:hover{ background: var(--navy-800); color:var(--text); }
+  .nav-link.active{ background: rgba(61,139,255,.14); color: var(--blue-bright); font-weight:600; }
+  .nav-link.done::before{ content:"✓ "; color: var(--cyan); }
+
+  .overlay{ display:none; }
+
+  .content{
+    margin-left:var(--sidebar-w); flex:1; min-width:0;
+    padding: 48px 40px 100px; max-width:780px;
+  }
+  .page{ display:none; }
+  .page.active{ display:block; }
+  .page-eyebrow{
+    font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--blue-bright);
+    margin-bottom:10px;
+  }
+  .page h1{ font-size:clamp(24px,4vw,34px); font-weight:700; margin-bottom:10px; line-height:1.2; }
+  .page-subtitle{ color:var(--muted); font-size:15px; margin-bottom:24px; }
+  .page-body h3{ font-size:18px; margin:28px 0 10px; }
+  .page-body h4{ font-size:15px; margin:20px 0 8px; color: var(--blue-bright); }
+  .page-body p{ margin-bottom:14px; color:var(--text); font-size:15px; }
+  .page-body b{ color: var(--white); }
+
+  .epigraph{
+    border-left:3px solid var(--blue); padding:6px 0 6px 18px; margin:8px 0 24px;
+    font-style:italic; color: var(--blue-bright); font-size:15.5px;
+  }
+
+  .plain-list{ list-style:none; margin-bottom:16px; }
+  .plain-list li{ padding:5px 0; font-size:14.5px; }
+
+  .table-wrap{ overflow-x:auto; margin:14px 0 22px; border:1px solid var(--line); border-radius:10px; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  thead th{
+    text-align:left; background: var(--navy-800); color: var(--blue-bright);
+    padding:10px 14px; font-weight:600; border-bottom:1px solid var(--line);
+  }
+  tbody td{ padding:10px 14px; border-bottom:1px solid var(--line); color:var(--text); }
+  tbody tr:last-child td{ border-bottom:none; }
+
+  .code-window{
+    background: var(--navy-800); border:1px solid var(--line); border-radius:12px;
+    overflow:hidden; margin:14px 0 22px;
+  }
+  .code-topbar{ display:flex; align-items:center; gap:8px; padding:10px 14px; border-bottom:1px solid var(--line); background: var(--navy-700); }
+  .code-topbar span{ width:9px; height:9px; border-radius:50%; background:#3a4568; }
+  .code-topbar .label{ margin-left:8px; font-size:11.5px; color:var(--muted); font-family:'IBM Plex Mono', monospace; }
+  .code-body{ padding:18px 20px; font-family:'IBM Plex Mono', monospace; font-size:13px; overflow-x:auto; color:#c9d4f5; white-space:pre; }
+
+  .info-box{ border-radius:12px; padding:18px 20px; font-size:14px; margin-bottom:20px; border:1px solid var(--line); }
+  .info-box .tag{ font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; display:block; }
+  .info-box p{ margin:0; color:var(--text); }
+  .box-dica{ background: rgba(61,139,255,.08); } .box-dica .tag{ color: var(--blue-bright); }
+  .box-erro{ background: rgba(255,120,90,.08); } .box-erro .tag{ color:#ff9878; }
+  .box-caso{ background: rgba(79,224,208,.08); } .box-caso .tag{ color: var(--cyan); }
+
+  .resumo, .exercicios{
+    background: var(--navy-800); border:1px solid var(--line); border-radius:12px;
+    padding:20px 22px; margin:22px 0;
+  }
+  .resumo h4, .exercicios h4{ font-size:14px; margin:0 0 10px; color:var(--blue-bright); }
+  .resumo ul, .exercicios ol{ padding-left:18px; }
+  .resumo li, .exercicios li{ font-size:14px; padding:4px 0; }
+
+  .tag-row{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px; }
+  .tag-pill{ font-size:11.5px; font-weight:600; padding:5px 12px; border-radius:100px; background: var(--navy-700); border:1px solid var(--line); color:var(--muted); }
+
+  .cover-hero{ display:grid; grid-template-columns: 240px 1fr; gap:32px; align-items:center; margin-bottom:10px; }
+  .cover-hero img{ border-radius:12px; box-shadow: 0 30px 70px -20px rgba(0,0,0,.6); }
+  .cover-hero h2{ font-size:22px; margin-bottom:10px; }
+  .cover-hero .small{ color:var(--muted); font-size:11.5px; letter-spacing:.08em; margin-bottom:14px; }
+  .cover-hero p{ margin-bottom:12px; }
+
+  .btn{ display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; padding:12px 20px; border-radius:10px; border:none; cursor:pointer; text-decoration:none; margin-top:6px; }
+  .btn-primary{ background: linear-gradient(135deg, var(--blue-bright), var(--blue)); color:#04101f; }
+
+  .chapter-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:24px; border-top:1px solid var(--line); }
+  .chapter-nav-btn{
+    font-size:13.5px; font-weight:600; padding:10px 18px; border-radius:8px; border:1px solid var(--line);
+    color:var(--text); text-decoration:none;
+  }
+  .chapter-nav-btn.primary{ background: var(--blue); color:#04101f; border-color:var(--blue); }
+
+  @media (max-width: 900px){
+    .menu-toggle{ display:block; }
+    .sidebar{ transform: translateX(-100%); transition: transform .25s ease; z-index:70; box-shadow: 20px 0 40px rgba(0,0,0,.4); }
+    .sidebar.open{ transform: translateX(0); }
+    .overlay.show{ display:block; position:fixed; inset:0; top:var(--topbar-h); background:rgba(0,0,0,.5); z-index:65; }
+    .content{ margin-left:0; padding:32px 20px 80px; }
+    .progress-wrap{ display:none; }
+    .cover-hero{ grid-template-columns:1fr; }
+    .cover-hero img{ max-width:200px; margin:0 auto; }
+  }
+  :focus-visible{ outline:2px solid var(--blue-bright); outline-offset:3px; }
+
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+    <div class="topbar-title mono small">CURSO · ANALISTA DE ALTA PERFORMANCE</div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-label" id="progressLabel">0 / 32 concluídos</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+        
+    <div class="nav-group">
+      <div class="nav-group-title">Início</div>
+      <ul class="nav-list"><li><a href="#capa" class="nav-link" data-target="capa">Analista de Alta Performance</a></li><li><a href="#sobre-volume" class="nav-link" data-target="sobre-volume">Sobre este volume</a></li><li><a href="#sobre-autor" class="nav-link" data-target="sobre-autor">Sobre o autor</a></li><li><a href="#introducao" class="nav-link" data-target="introducao">Introdução</a></li></ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Parte I · Mentalidade</div>
+      <ul class="nav-list"><li><a href="#cap-1" class="nav-link" data-target="cap-1">Evolução da Profissão</a></li><li><a href="#cap-2" class="nav-link" data-target="cap-2">Pensamento Analítico</a></li><li><a href="#cap-3" class="nav-link" data-target="cap-3">O Método Analista 360°</a></li><li><a href="#cap-4" class="nav-link" data-target="cap-4">Framework para Resolução de Problemas</a></li></ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Parte II · SQL Completo</div>
+      <ul class="nav-list"><li><a href="#cap-5" class="nav-link" data-target="cap-5">Fundamentos de SQL</a></li><li><a href="#cap-6" class="nav-link" data-target="cap-6">Mapa Mental do SQL</a></li><li><a href="#cap-7" class="nav-link" data-target="cap-7">DDL, DML, DCL e TCL</a></li><li><a href="#cap-8" class="nav-link" data-target="cap-8">SELECT, WHERE, GROUP BY e HAVING</a></li><li><a href="#cap-9" class="nav-link" data-target="cap-9">Subqueries e CTEs</a></li><li><a href="#cap-10" class="nav-link" data-target="cap-10">Window Functions</a></li><li><a href="#cap-11" class="nav-link" data-target="cap-11">Performance, Índices e EXISTS × IN</a></li><li><a href="#cap-12" class="nav-link" data-target="cap-12">UNION × UNION ALL e CASE</a></li><li><a href="#cap-13" class="nav-link" data-target="cap-13">Modelo SQL 3C e Boas Práticas Gerais</a></li></ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Parte III · JOINs Profissionais</div>
+      <ul class="nav-list"><li><a href="#cap-14" class="nav-link" data-target="cap-14">Tipos de JOIN</a></li><li><a href="#cap-15" class="nav-link" data-target="cap-15">Granularidade e Cardinalidade</a></li><li><a href="#cap-16" class="nav-link" data-target="cap-16">Duplicidades e Como Depurar JOINs</a></li><li><a href="#cap-17" class="nav-link" data-target="cap-17">Padronização de Dados para JOINs Confiáveis</a></li><li><a href="#cap-18" class="nav-link" data-target="cap-18">Checklist Completo de JOINs Profissionais</a></li></ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Parte IV · ETL e KNIME</div>
+      <ul class="nav-list"><li><a href="#cap-19" class="nav-link" data-target="cap-19">Arquitetura ETL</a></li><li><a href="#cap-20" class="nav-link" data-target="cap-20">Extração de Dados: Oracle, Hive, APIs e Excel</a></li><li><a href="#cap-21" class="nav-link" data-target="cap-21">Fluxos em KNIME e Automações</a></li><li><a href="#cap-22" class="nav-link" data-target="cap-22">Boas Práticas e Tratamento de Erros em ETL</a></li></ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Apêndices</div>
+      <ul class="nav-list"><li><a href="#apendice-a" class="nav-link" data-target="apendice-a">Cheatsheet SQL</a></li><li><a href="#apendice-b" class="nav-link" data-target="apendice-b">Cheatsheet Oracle</a></li><li><a href="#apendice-c" class="nav-link" data-target="apendice-c">Checklist SQL</a></li><li><a href="#apendice-d" class="nav-link" data-target="apendice-d">Checklist ETL</a></li><li><a href="#apendice-e" class="nav-link" data-target="apendice-e">Templates Práticos</a></li><li><a href="#referencias" class="nav-link" data-target="referencias">Referências</a></li></ul>
+    </div>
+      </div>
+    </aside>
+    <div class="overlay" id="overlay"></div>
+
+    <main class="content" id="content">
+      
+    <article class="page" id="capa" data-id="capa">
+      
+      <h1>Analista de Alta Performance</h1>
+      <p class="page-subtitle">Mentalidade, SQL Completo, JOINs Profissionais e ETL — Volume 1</p>
+      <div class="page-body">
+  <div class="cover-hero">
+    <img src="capa.jpeg" alt="Capa do livro Analista de Alta Performance - Volume 1">
+    <div>
+      <p class="mono small">SÉRIE PROFISSIONAL DE DADOS · VOLUME 1</p>
+      <h2>Bem-vindo ao curso</h2>
+      <p>Este curso reúne, capítulo a capítulo, todo o conteúdo do livro <b>Analista de Alta Performance — Volume 1</b>,
+      de Thiago Barbosa: mentalidade analítica, SQL completo, JOINs profissionais e arquitetura de ETL.</p>
+      <p>Use o menu ao lado para navegar entre as partes e capítulos, ou clique em <b>Começar leitura</b> para seguir na ordem recomendada.</p>
+      <a class="btn btn-primary" href="#sobre-volume">Começar leitura →</a>
+    </div>
+  </div>
+  </div>
+      <div class="chapter-nav"><span></span><a href="#sobre-volume" class="chapter-nav-btn primary" data-target="sobre-volume">Próximo →</a></div>
+    </article>
+    <article class="page" id="sobre-volume" data-id="sobre-volume">
+      <div class="page-eyebrow">Início</div>
+      <h1>Sobre este volume</h1>
+      
+      <div class="page-body">
+  <p>Este é o primeiro de dois volumes da série <b>Analista de Alta Performance</b>. O Volume 1 constrói a base técnica
+  essencial de todo profissional de dados: a mentalidade analítica, o domínio completo de SQL, os JOINs profissionais
+  e a arquitetura de ETL.</p>
+  <p>O Volume 2 (venda futura) avança para visualização de dados, Business Intelligence, Inteligência Artificial
+  aplicada, estudos de caso setoriais e carreira.</p>
+  <p>Este livro traz mais de 50 exemplos comentados de SQL, checklists prontos para uso, cheatsheets de referência
+  rápida e boxes de <b>Dica do Especialista</b>, <b>Erro Comum</b> e <b>Caso Real</b> ao longo de cada capítulo.</p>
+  </div>
+      <div class="chapter-nav"><a href="#capa" class="chapter-nav-btn" data-target="capa">← Anterior</a><a href="#sobre-autor" class="chapter-nav-btn primary" data-target="sobre-autor">Próximo →</a></div>
+    </article>
+    <article class="page" id="sobre-autor" data-id="sobre-autor">
+      <div class="page-eyebrow">Início</div>
+      <h1>Sobre o autor</h1>
+      <p class="page-subtitle">Thiago Barbosa</p>
+      <div class="page-body">
+  <p>Profissional de dados com experiência em Business Intelligence, Data Analytics, automação de processos,
+  construção de indicadores, análise de grandes volumes de dados e soluções orientadas à tomada de decisão.</p>
+  <h3>Formação</h3>
+  <ul class="plain-list">
+    <li>Engenharia de Automação e Controle</li>
+    <li>Pós-graduação em Business Intelligence, Big Data e Analytics</li>
+  </ul>
+  <h3>Tecnologias e conhecimentos</h3>
+  <div class="tag-row">
+    <span class="tag-pill">SQL</span><span class="tag-pill">Oracle</span><span class="tag-pill">Tableau</span>
+    <span class="tag-pill">KNIME</span><span class="tag-pill">ETL</span><span class="tag-pill">Data Warehouse</span>
+    <span class="tag-pill">Analytics</span><span class="tag-pill">IA aplicada aos dados</span>
+  </div>
+  </div>
+      <div class="chapter-nav"><a href="#sobre-volume" class="chapter-nav-btn" data-target="sobre-volume">← Anterior</a><a href="#introducao" class="chapter-nav-btn primary" data-target="introducao">Próximo →</a></div>
+    </article>
+    <article class="page" id="introducao" data-id="introducao">
+      <div class="page-eyebrow">Início</div>
+      <h1>Introdução</h1>
+      <p class="page-subtitle">Por que este volume existe</p>
+      <div class="page-body">
+  <p>A maioria dos materiais sobre dados ensina sintaxe isolada de contexto: um comando aqui, uma função ali, sem
+  conectar com o motivo pelo qual aquilo importa para uma decisão real de negócio.</p>
+  <p>Este volume segue o caminho contrário. Ele começa pela mentalidade — porque nenhuma consulta SQL substitui
+  uma boa pergunta — e só depois avança para a técnica: primeiro o SQL completo, depois o problema mais comum e
+  mais mal resolvido no dia a dia (JOINs), e por fim a arquitetura que sustenta tudo isso em produção: o ETL.</p>
+  <h3>Como usar este livro</h3>
+  <ul class="plain-list">
+    <li>Leia os capítulos na ordem — cada Parte constrói sobre a anterior.</li>
+    <li>Não pule os boxes de Dica do Especialista, Erro Comum e Caso Real — eles concentram a experiência prática.</li>
+    <li>Resolva os exercícios ao final de cada capítulo antes de seguir para o próximo.</li>
+    <li>Use os apêndices como referência rápida no dia a dia, depois de terminar a leitura.</li>
+  </ul>
+  </div>
+      <div class="chapter-nav"><a href="#sobre-autor" class="chapter-nav-btn" data-target="sobre-autor">← Anterior</a><a href="#cap-1" class="chapter-nav-btn primary" data-target="cap-1">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-1" data-id="cap-1">
+      <div class="page-eyebrow">Parte I · Mentalidade do Analista de Alta Performance</div>
+      <h1>Capítulo 1 · Evolução da Profissão</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"A tecnologia gera dados. O analista transforma dados em direção."</blockquote>
+  <p>Durante muitos anos, o profissional de dados era visto como alguém responsável por gerar relatórios. O fluxo
+  tradicional era o seguinte:</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">fluxo_tradicional.txt</div></div>
+  <pre class="code-body"><code>SOLICITAÇÃO
+  ↓
+BUSCA DOS DADOS
+  ↓
+RELATÓRIO
+  ↓
+ENTREGA</code></pre>
+</div>
+  <p>Esse modelo ainda existe, porém o mercado evoluiu. Hoje as empresas precisam de profissionais capazes de
+  investigar problemas, identificar oportunidades, automatizar processos, antecipar cenários e apoiar decisões
+  estratégicas.</p>
+  <h3>A evolução do analista</h3>
+  <div class="table-wrap"><table><thead><tr><th>Antes</th><th>Hoje</th></tr></thead><tbody><tr><td>&ldquo;Preciso deste relatório.&rdquo;</td><td>&ldquo;Qual decisão precisamos melhorar?&rdquo;</td></tr></tbody></table></div>
+  <p>O profissional moderno entende que um dashboard não começa no gráfico. Ele começa em uma pergunta de negócio.</p>
+  <div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Antes de aceitar qualquer solicitação, pergunte: "que decisão essa informação vai apoiar?". Se ninguém souber responder, o pedido provavelmente precisa ser refinado antes de virar trabalho.</p></div>
+  <h3>O Analista 360°</h3>
+  <p>O profissional completo conecta quatro dimensões:</p>
+  <div class="table-wrap"><table><thead><tr><th>Dimensão</th><th>Envolve</th></tr></thead><tbody><tr><td>Técnica</td><td>SQL, bancos de dados, ETL, BI, automação</td></tr><tr><td>Negócio</td><td>Objetivos, indicadores, prioridades, impactos</td></tr><tr><td>Análise</td><td>Questionar, investigar, interpretar, encontrar padrões</td></tr><tr><td>Comunicação</td><td>Transformar análises complexas em decisões claras</td></tr></tbody></table></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>O analista deixou de ser um gerador de relatórios para se tornar um agente de transformação.</li><li>Toda solicitação deveria vir acompanhada de uma decisão a ser apoiada.</li><li>O Analista 360° conecta técnica, negócio, análise e comunicação.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Liste as últimas 3 solicitações que você recebeu. Para cada uma, escreva qual decisão ela realmente apoiava.</li><li>Escolha um relatório que você entrega hoje e reescreva o título como uma pergunta de negócio.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#introducao" class="chapter-nav-btn" data-target="introducao">← Anterior</a><a href="#cap-2" class="chapter-nav-btn primary" data-target="cap-2">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-2" data-id="cap-2">
+      <div class="page-eyebrow">Parte I · Mentalidade do Analista de Alta Performance</div>
+      <h1>Capítulo 2 · Pensamento Analítico</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Ferramentas podem ser aprendidas. A capacidade de fazer as perguntas certas é o verdadeiro diferencial."</blockquote>
+  <p>Um analista de alta performance não começa uma análise pensando em gráficos ou consultas. Ele começa
+  entendendo qual é o problema, qual decisão precisa ser tomada e qual impacto queremos gerar.</p>
+  <h3>O analista investigador</h3>
+  <p>Um profissional comum recebe uma solicitação e executa. Um profissional analítico investiga.</p>
+  <div class="info-box box-caso"><span class="tag">📁 Caso Real</span><p>Solicitação recebida: "Crie um indicador de visitas técnicas." Um analista comum cria o indicador direto. Um analista de alta performance pergunta primeiro: qual tipo de visita? Qual período? Qual objetivo? Existe uma meta? Qual ação será tomada a partir do número?</p></div>
+  <h3>O ciclo do pensamento analítico</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">ciclo_analitico.txt</div></div>
+  <pre class="code-body"><code>PROBLEMA → PERGUNTAS → DADOS → ANÁLISE → INSIGHTS → DECISÃO</code></pre>
+</div>
+  <h3>Dados não são respostas</h3>
+  <p>Um dos maiores erros na análise de dados é acreditar que o número final é a resposta. "Temos 10 mil
+  ocorrências" não diz se é muito ou pouco, se aumentou, qual a causa ou qual ação tomar. O analista precisa
+  buscar contexto.</p>
+  <div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Entregar um número isolado sem comparação, meta ou tendência. Um KPI sem contexto é apenas um número — o leitor não sabe se deve comemorar ou se preocupar.</p></div>
+  <h3>A importância do contexto</h3>
+  <div class="table-wrap"><table><thead><tr><th>Pergunta</th><th>Significado</th></tr></thead><tbody><tr><td>O que aconteceu?</td><td>Resultado atual</td></tr><tr><td>Quando aconteceu?</td><td>Evolução no tempo</td></tr><tr><td>Onde aconteceu?</td><td>Localização ou segmento</td></tr><tr><td>Por que aconteceu?</td><td>Causa</td></tr><tr><td>O que fazer?</td><td>Ação</td></tr></tbody></table></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Pensamento analítico começa com perguntas, não com ferramentas.</li><li>Um dado isolado não é uma resposta — precisa de comparação, tendência e causa.</li><li>Todo indicador deveria responder o quê, quando, onde, por quê e o que fazer.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Pegue um indicador que você acompanha hoje e escreva as 5 perguntas de contexto para ele (o quê, quando, onde, por quê, o que fazer).</li><li>Reescreva uma solicitação recente do seu time transformando-a em pelo menos 3 perguntas de investigação antes da execução.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-1" class="chapter-nav-btn" data-target="cap-1">← Anterior</a><a href="#cap-3" class="chapter-nav-btn primary" data-target="cap-3">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-3" data-id="cap-3">
+      <div class="page-eyebrow">Parte I · Mentalidade do Analista de Alta Performance</div>
+      <h1>Capítulo 3 · O Método Analista 360°</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"O analista completo conecta dados, pessoas e decisões."</blockquote>
+  <p>O Método Analista 360° representa uma visão completa do ciclo de geração de valor em qualquer projeto de
+  dados.</p>
+  <h3>O ciclo Analista 360°</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">ciclo_360.txt</div></div>
+  <pre class="code-body"><code>ENTENDER → EXTRAIR → TRANSFORMAR → ANALISAR → COMUNICAR → MELHORAR</code></pre>
+</div>
+  <h3>Etapa 1 — Entender</h3>
+  <p>Antes da tecnologia vem o problema. A pergunta inicial não deve ser "qual ferramenta vou usar?", mas "qual
+  decisão precisa ser melhorada?". Nessa etapa, o analista define quem utilizará a informação, qual indicador
+  representa sucesso e qual ação será tomada.</p>
+  <h3>Etapa 2 — Extrair</h3>
+  <p>Encontrar os dados corretos. O analista precisa entender sistemas de origem, tabelas, relacionamentos,
+  períodos e regras já existentes.</p>
+  <h3>Etapa 3 — Transformar</h3>
+  <p>Dados precisam ganhar significado. Nesta fase: limpamos, padronizamos, enriquecemos e criamos indicadores.</p>
+  <h3>Etapa 4 — Analisar</h3>
+  <p>Encontrar respostas. O analista busca tendências, desvios, causas e oportunidades.</p>
+  <h3>Etapa 5 — Comunicar</h3>
+  <p>A análise precisa ser entendida. Ferramentas: dashboards, apresentações, relatórios e storytelling.</p>
+  <h3>Etapa 6 — Melhorar</h3>
+  <p>Uma solução de dados nunca termina. Ela evolui conforme o negócio muda, novas perguntas surgem e novos
+  dados aparecem.</p>
+  <div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Use o ciclo 360° como checklist antes de fechar qualquer entrega: se você não passou por todas as seis etapas, alguma coisa provavelmente ficou frágil — geralmente é o "Entender" ou o "Melhorar", as duas etapas mais puladas sob pressão de prazo.</p></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>O Método Analista 360° tem seis etapas: entender, extrair, transformar, analisar, comunicar e melhorar.</li><li>O valor de um analista não vem da ferramenta, vem de percorrer o ciclo completo.</li><li>"Melhorar" não é opcional — é o que evita que a solução fique obsoleta.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escolha um dashboard ou relatório que você mantém. Para cada uma das 6 etapas do ciclo, escreva se ela foi bem executada ou pulada.</li><li>Defina uma ação concreta de "melhoria contínua" para esse mesmo entregável.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-2" class="chapter-nav-btn" data-target="cap-2">← Anterior</a><a href="#cap-4" class="chapter-nav-btn primary" data-target="cap-4">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-4" data-id="cap-4">
+      <div class="page-eyebrow">Parte I · Mentalidade do Analista de Alta Performance</div>
+      <h1>Capítulo 4 · Framework para Resolução de Problemas</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Só podemos gerenciar aquilo que podemos medir."</blockquote>
+  <p>Ferramentas de qualidade nasceram na indústria, mas se aplicam perfeitamente à rotina de um analista de
+  dados: estruturar um problema de forma clara é o que diferencia uma solução eficaz de um retrabalho
+  constante.</p>
+  <h3>O ciclo PDCA aplicado a dados</h3>
+  <p>O PDCA organiza a melhoria contínua em quatro fases, e pode ser usado tanto para resolver um problema
+  pontual quanto para manter a qualidade de um processo de dados ao longo do tempo.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">pdca.txt</div></div>
+  <pre class="code-body"><code>P — PLAN
+  1. Identificação do problema · 2. Observação
+  3. Análise de causas · 4. Plano de ação
+    ↓
+D — DO
+  5. Ação: executar, treinar e coletar dados
+    ↓
+C — CHECK
+  6. Verificação: o bloqueio foi efetivo?
+    ↓
+A — ACT
+  7. Padronização · 8. Conclusão</code></pre>
+</div>
+  <h3>1 · Identificação do problema — Brainstorming</h3>
+  <p>Técnica criativa de geração de ideias em grupo, num ambiente livre de críticas, para explorar o máximo de
+  hipóteses antes de refinar a mais provável.</p>
+  <h3>2 · Observação — Histograma</h3>
+  <p>Usado para visualizar a distribuição dos dados e identificar variações ou padrões que podem indicar a
+  origem de um problema.</p>
+  <h3>3 · Análise de causas</h3>
+  <div class="table-wrap"><table><thead><tr><th>Ferramenta</th><th>Função</th></tr></thead><tbody><tr><td>5 Porquês</td><td>Repetir a pergunta "por quê" até chegar à causa raiz do problema</td></tr><tr><td>Diagrama de Ishikawa (Causa e Efeito)</td><td>Separar as causas por categoria, facilitando a compreensão do problema</td></tr><tr><td>5W2H</td><td>Transformar o diagnóstico em plano de ação claro e mensurável</td></tr></tbody></table></div>
+  <h3>4 a 8 · Do plano de ação à padronização</h3>
+  <p>Depois de definidas as ações, elas são executadas, verificadas e — se comprovadamente eficazes —
+  padronizadas, para que toda a equipe passe a seguir o novo processo.</p>
+  <h3>FCA — Fato, Causa e Ação</h3>
+  <p>O FCA funciona como uma tela gerencial: um painel de síntese para que gestores visualizem o problema e as
+  ações de forma rápida, sem precisar ler o diagnóstico completo.</p>
+  <div class="info-box box-caso"><span class="tag">📁 Caso Real</span><p>Fato: campo "Vendedor" não aparece para alguns registros na tabela de comissionamento. Causa: o operador não fez o upload dos vendedores da região Nordeste. Ação: cadastrar os vendedores faltantes, treinar os operadores e adicionar um alarme automático de verificação.</p></div>
+  <h3>A espiral do conhecimento</h3>
+  <p>Grande parte do conhecimento dentro das empresas ainda é tácito — existe apenas na cabeça das pessoas,
+  tornando processos inteiros dependentes de indivíduos específicos. Transformar esse conhecimento em explícito
+  reduz custos e libera tempo para inovação.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">espiral_conhecimento.txt</div></div>
+  <pre class="code-body"><code>SOCIALIZAÇÃO → EXTERNALIZAÇÃO
+     ↑              ↓
+INTERNALIZAÇÃO ← COMBINAÇÃO</code></pre>
+</div><div class="table-wrap"><table><thead><tr><th>Etapa</th><th>Significado</th></tr></thead><tbody><tr><td>Socialização</td><td>Conhecimento tácito compartilhado entre pessoas, pela convivência e observação</td></tr><tr><td>Externalização</td><td>Conhecimento tácito transformado em conceitos explícitos e documentados</td></tr><tr><td>Combinação</td><td>Diferentes conhecimentos explícitos são combinados em algo novo</td></tr><tr><td>Internalização</td><td>O conhecimento explícito é absorvido e vira prática — aprender fazendo</td></tr></tbody></table></div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Documente regras de negócio, lógicas de ETL e definições de indicadores assim que forem descobertas — antes que voltem a ser conhecimento tácito de uma única pessoa.</p></div>
+  <h3>KPI: controlando a performance das ações</h3>
+  <p>Um bom KPI é relevante (relacionado aos objetivos da organização), mensurável (passível de quantificação
+  objetiva), alcançável (realista dentro das capacidades da equipe) e temporal (definido para um período
+  específico de avaliação).</p>
+  <div class="resumo"><h4>Resumo do capítulo</h4><ul><li>O PDCA organiza a resolução de problemas em Planejar, Fazer, Checar e Agir.</li><li>5 Porquês, Ishikawa e 5W2H se complementam na análise de causas.</li><li>FCA (Fato, Causa, Ação) é a forma mais rápida de comunicar um problema a um gestor.</li><li>Conhecimento tácito documentado vira ativo da empresa — e reduz dependência de pessoas.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escolha um problema recorrente no seu time e aplique os 5 Porquês até chegar à causa raiz.</li><li>Monte um FCA (Fato, Causa, Ação) de uma pendência real do seu backlog.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-3" class="chapter-nav-btn" data-target="cap-3">← Anterior</a><a href="#cap-5" class="chapter-nav-btn primary" data-target="cap-5">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-5" data-id="cap-5">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 5 · Fundamentos de SQL</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"SQL é a ponte entre a pergunta de negócio e a informação necessária para respondê-la."</blockquote>
+  <p>SQL (Structured Query Language) é uma das principais habilidades de um profissional de dados. Mesmo com o
+  crescimento de ferramentas de BI e inteligência artificial, saber consultar e entender dados continua sendo
+  fundamental — porque é a camada mais próxima da verdade dos dados, sem filtros de terceiros.</p>
+  <h3>Por que aprender SQL</h3>
+  <p>Porque o analista precisa acessar dados diretamente, validar informações, criar análises personalizadas,
+  entender estruturas de banco e resolver problemas sem depender de outra pessoa para extrair um número.</p>
+  <h3>Estrutura básica de uma consulta</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">estrutura_basica.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  coluna1,
+  coluna2
+FROM tabela
+WHERE condição;</code></pre>
+</div>
+  <h3>Exemplo 1 — SELECT simples</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_01.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  nome_cliente,
+  cidade
+FROM clientes;</code></pre>
+</div><p>Retorna nome e cidade de todos os clientes.</p>
+  <h3>Exemplo 2 — WHERE com filtro</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_02.sql</div></div>
+  <pre class="code-body"><code>SELECT *
+FROM clientes
+WHERE status = &#x27;ATIVO&#x27;;</code></pre>
+</div><p>Retorna apenas clientes ativos.</p>
+  <h3>Exemplo 3 — ORDER BY</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_03.sql</div></div>
+  <pre class="code-body"><code>SELECT *
+FROM vendas
+ORDER BY data_venda DESC;</code></pre>
+</div><p>Mostra os registros mais recentes primeiro.</p>
+  <h3>Exemplo 4 — GROUP BY</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_04.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  cidade,
+  COUNT(*) AS quantidade
+FROM clientes
+GROUP BY cidade;</code></pre>
+</div><p>Quantidade de clientes por cidade.</p><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Leia toda consulta na ordem lógica de execução, não na ordem em que está escrita: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY. Isso evita boa parte da confusão de iniciantes com HAVING × WHERE.</p></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>SQL é a base de todo trabalho técnico do analista — acesso direto, sem intermediários.</li><li>A ordem lógica de leitura de uma consulta é diferente da ordem em que ela é escrita.</li><li>SELECT, WHERE, ORDER BY e GROUP BY são os quatro blocos fundamentais.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escreva uma consulta que retorne os 10 clientes com maior valor total de compras.</li><li>Escreva uma consulta que conte quantos pedidos existem por status.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-4" class="chapter-nav-btn" data-target="cap-4">← Anterior</a><a href="#cap-6" class="chapter-nav-btn primary" data-target="cap-6">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-6" data-id="cap-6">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 6 · Mapa Mental do SQL</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Ver a estrutura inteira da linguagem de uma vez organiza tudo o que vem depois."</blockquote>
+  <p>Antes de entrar em cada comando em detalhe, vale enxergar o SQL como um mapa: um núcleo central (SQL) que
+  se ramifica em cinco grandes famílias de comandos, cada uma com uma função clara.</p>
+  <h3>As cinco famílias de comandos SQL</h3>
+  <div class="table-wrap"><table><thead><tr><th>Sigla</th><th>Nome</th><th>Função</th><th>Comandos</th></tr></thead><tbody><tr><td>DDL</td><td>Data Definition Language</td><td>Define a estrutura do banco</td><td>CREATE, ALTER, DROP, TRUNCATE</td></tr><tr><td>DML</td><td>Data Manipulation Language</td><td>Manipula os dados dentro das tabelas</td><td>SELECT, INSERT, UPDATE, DELETE</td></tr><tr><td>DCL</td><td>Data Control Language</td><td>Controla permissões de acesso</td><td>GRANT, REVOKE</td></tr><tr><td>TCL</td><td>Transaction Control Language</td><td>Controla transações</td><td>COMMIT, ROLLBACK, SAVEPOINT</td></tr></tbody></table></div>
+  <h3>Mapa mental — ramificações do SELECT</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">mapa_select.txt</div></div>
+  <pre class="code-body"><code>SQL
+├─ WHERE → &lt;, &gt;, BETWEEN, LIKE, IN, ANY, ALL, EXISTS, AND/OR/NOT
+├─ GROUP BY → GROUP BY coluna · HAVING
+├─ ORDER BY → ASC · DESC
+├─ JOIN → INNER · LEFT · RIGHT · FULL
+├─ FUNCTIONS → AVG() SUM() COUNT() MIN() MAX()
+├─ WINDOW FUNCTIONS → OVER() ROW_NUMBER() RANK() DENSE_RANK() NTILE() LAG() LEAD()
+└─ ALIAS → AS</code></pre>
+</div>
+  <h3>Mapa mental — ramificações do DDL</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">mapa_ddl.txt</div></div>
+  <pre class="code-body"><code>DDL
+├─ VIEW → Database · Table · View
+├─ DROP → Table · Database
+├─ TRUNCATE → Table
+└─ ALTER → Table
+    ├─ ADD → Column
+    ├─ REMOVE → Column · Constraints
+    └─ MODIFY → Data type · Default</code></pre>
+</div><p>Constraints comuns aplicadas a colunas: UNIQUE, NOT NULL, PRIMARY KEY, FOREIGN KEY, CHECK e DEFAULT.</p><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Guarde este mapa mental — ele resume praticamente toda a gramática do SQL usada no dia a dia. Os próximos capítulos detalham cada ramificação, com exemplos comentados.</p></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>SQL se organiza em cinco famílias: DDL, DML, DCL, TCL — com DML sendo a mais usada no dia a dia analítico.</li><li>O SELECT se ramifica em WHERE, GROUP BY, ORDER BY, JOIN, funções agregadas e window functions.</li><li>O DDL controla a estrutura: criação, alteração e remoção de tabelas e colunas.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Classifique estes comandos em DDL, DML, DCL ou TCL: CREATE TABLE, DELETE, GRANT, ROLLBACK, ALTER TABLE, INSERT.</li><li>Desenhe (à mão ou em texto) seu próprio mapa mental do SQL com os comandos que você mais usa no trabalho.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-5" class="chapter-nav-btn" data-target="cap-5">← Anterior</a><a href="#cap-7" class="chapter-nav-btn primary" data-target="cap-7">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-7" data-id="cap-7">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 7 · DDL, DML, DCL e TCL</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Cada família de comando SQL resolve um tipo de problema diferente — confundir uma com a outra custa caro."</blockquote>
+  <p>Este capítulo detalha, com exemplos comentados, os comandos das quatro famílias apresentadas no mapa
+  mental.</p>
+  <h3>DDL — Data Definition Language</h3>
+  <h4>Exemplo 5 — CREATE TABLE</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_05.sql</div></div>
+  <pre class="code-body"><code>CREATE TABLE clientes (
+  id NUMBER PRIMARY KEY,
+  nome VARCHAR2(100) NOT NULL,
+  cidade VARCHAR2(60),
+  data_cadastro DATE DEFAULT SYSDATE
+);</code></pre>
+</div><p>Cria a tabela clientes com uma chave primária e uma coluna obrigatória (NOT NULL).</p>
+  <h4>Exemplo 6 — ALTER TABLE (adicionar coluna)</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_06.sql</div></div>
+  <pre class="code-body"><code>ALTER TABLE clientes
+ADD email VARCHAR2(120);</code></pre>
+</div>
+  <h4>Exemplo 7 — ALTER TABLE (modificar tipo)</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_07.sql</div></div>
+  <pre class="code-body"><code>ALTER TABLE clientes
+MODIFY nome VARCHAR2(200);</code></pre>
+</div>
+  <h4>Exemplo 8 — DROP e TRUNCATE</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_08.sql</div></div>
+  <pre class="code-body"><code>DROP TABLE clientes_teste;
+TRUNCATE TABLE log_temporario;</code></pre>
+</div><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Confundir DROP com TRUNCATE. DROP remove a tabela inteira, estrutura incluída. TRUNCATE apaga todos os registros, mas mantém a estrutura da tabela intacta.</p></div>
+  <h3>DML — Data Manipulation Language</h3>
+  <h4>Exemplo 9 — INSERT</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_09.sql</div></div>
+  <pre class="code-body"><code>INSERT INTO clientes (id, nome, cidade)
+VALUES (1, &#x27;Maria Silva&#x27;, &#x27;Recife&#x27;);</code></pre>
+</div>
+  <h4>Exemplo 10 — UPDATE</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_10.sql</div></div>
+  <pre class="code-body"><code>UPDATE clientes
+SET cidade = &#x27;Salvador&#x27;
+WHERE id = 1;</code></pre>
+</div>
+  <h4>Exemplo 11 — DELETE</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_11.sql</div></div>
+  <pre class="code-body"><code>DELETE FROM clientes
+WHERE status = &#x27;INATIVO&#x27;;</code></pre>
+</div><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Rodar UPDATE ou DELETE sem WHERE. Sem a cláusula de filtro, o comando afeta todas as linhas da tabela — um dos erros mais caros que existem em produção.</p></div>
+  <h3>DCL — Data Control Language</h3>
+  <h4>Exemplo 12 — GRANT</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_12.sql</div></div>
+  <pre class="code-body"><code>GRANT SELECT, INSERT ON clientes TO analista_bi;</code></pre>
+</div>
+  <h4>Exemplo 13 — REVOKE</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_13.sql</div></div>
+  <pre class="code-body"><code>REVOKE INSERT ON clientes FROM analista_bi;</code></pre>
+</div><p>O analista de dados normalmente não gerencia permissões diretamente, mas entender GRANT e REVOKE ajuda a solicitar acessos corretos ao time de infraestrutura.</p>
+  <h3>TCL — Transaction Control Language</h3>
+  <h4>Exemplo 14 — COMMIT e ROLLBACK</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_14.sql</div></div>
+  <pre class="code-body"><code>UPDATE clientes SET cidade = &#x27;Fortaleza&#x27; WHERE id = 5;
+-- Confirma a alteração de forma definitiva:
+COMMIT;
+-- Ou, para desfazer antes do commit:
+ROLLBACK;</code></pre>
+</div>
+  <h4>Exemplo 15 — SAVEPOINT</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_15.sql</div></div>
+  <pre class="code-body"><code>SAVEPOINT antes_da_exclusao;
+DELETE FROM pedidos WHERE status = &#x27;CANCELADO&#x27;;
+ROLLBACK TO antes_da_exclusao;</code></pre>
+</div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Em ambientes com AUTOCOMMIT desativado (comum em Oracle), sempre confirme com COMMIT ao final de um bloco de alterações testado — ou você corre o risco de perder o trabalho na próxima desconexão.</p></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>DDL define estrutura (CREATE, ALTER, DROP, TRUNCATE).</li><li>DML manipula dados (SELECT, INSERT, UPDATE, DELETE) — e é onde o analista passa a maior parte do tempo.</li><li>DCL controla acesso (GRANT, REVOKE).</li><li>TCL controla transações (COMMIT, ROLLBACK, SAVEPOINT) — essencial antes de qualquer alteração em produção.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escreva o DDL para criar uma tabela "pedidos" com id, cliente_id, valor e data_pedido.</li><li>Escreva um UPDATE com WHERE bem definido para alterar o status de um pedido específico, seguido do COMMIT.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-6" class="chapter-nav-btn" data-target="cap-6">← Anterior</a><a href="#cap-8" class="chapter-nav-btn primary" data-target="cap-8">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-8" data-id="cap-8">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 8 · SELECT, WHERE, GROUP BY e HAVING</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"A diferença entre WHERE e HAVING é a diferença entre filtrar antes e filtrar depois de agrupar."</blockquote>
+  <p>SELECT, WHERE, GROUP BY e HAVING formam o núcleo de praticamente toda consulta analítica. Dominar a
+  combinação dos quatro resolve a maioria dos pedidos do dia a dia.</p>
+  <h3>SELECT com expressões</h3>
+  <h4>Exemplo 16 — colunas calculadas</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_16.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  nome_produto,
+  preco,
+  preco * 0.9 AS preco_com_desconto
+FROM produtos;</code></pre>
+</div>
+  <h3>WHERE — filtrando antes de agrupar</h3>
+  <h4>Exemplo 17 — múltiplas condições</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_17.sql</div></div>
+  <pre class="code-body"><code>SELECT *
+FROM vendas
+WHERE data_venda &gt;= DATE &#x27;2026-01-01&#x27;
+  AND valor &gt; 500
+  AND regiao IN (&#x27;SUDESTE&#x27;, &#x27;SUL&#x27;);</code></pre>
+</div>
+  <h4>Exemplo 18 — LIKE e BETWEEN</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_18.sql</div></div>
+  <pre class="code-body"><code>SELECT *
+FROM clientes
+WHERE nome LIKE &#x27;A%&#x27;
+  AND idade BETWEEN 25 AND 40;</code></pre>
+</div>
+  <h3>GROUP BY — agrupando resultados</h3>
+  <h4>Exemplo 19 — agregação simples</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_19.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  regiao,
+  SUM(valor) AS total_vendas
+FROM vendas
+GROUP BY regiao;</code></pre>
+</div>
+  <h4>Exemplo 20 — agrupando por múltiplas colunas</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_20.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  regiao,
+  TO_CHAR(data_venda, &#x27;YYYY-MM&#x27;) AS mes,
+  SUM(valor) AS total_mes
+FROM vendas
+GROUP BY regiao, TO_CHAR(data_venda, &#x27;YYYY-MM&#x27;);</code></pre>
+</div>
+  <h3>HAVING — filtrando depois de agrupar</h3>
+  <h4>Exemplo 21 — HAVING com agregação</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_21.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  regiao,
+  SUM(valor) AS total_vendas
+FROM vendas
+GROUP BY regiao
+HAVING SUM(valor) &gt; 100000;</code></pre>
+</div><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Tentar usar uma função agregada (como SUM ou COUNT) direto no WHERE. O WHERE filtra linhas antes do agrupamento — a função agregada só existe depois do GROUP BY. Por isso, filtros sobre valores agregados sempre vão no HAVING.</p></div>
+  <h3>Ordem lógica completa</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">ordem_logica.txt</div></div>
+  <pre class="code-body"><code>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</code></pre>
+</div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>WHERE filtra linhas individuais, antes do agrupamento.</li><li>GROUP BY agrupa linhas para permitir agregações (SUM, COUNT, AVG...).</li><li>HAVING filtra os grupos já agregados — é o "WHERE" de depois do GROUP BY.</li><li>A ordem lógica de execução é FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escreva uma consulta que retorne apenas as regiões cujo total de vendas ultrapassa R$ 50.000, ordenadas do maior para o menor total.</li><li>Explique, com suas palavras, por que "WHERE SUM(valor) > 100" dá erro em SQL.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-7" class="chapter-nav-btn" data-target="cap-7">← Anterior</a><a href="#cap-9" class="chapter-nav-btn primary" data-target="cap-9">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-9" data-id="cap-9">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 9 · Subqueries e CTEs</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Uma consulta bem estruturada se lê como um texto: por partes, do começo ao fim."</blockquote>
+  <p>Consultas complexas raramente são resolvidas em um único bloco plano. Subqueries e CTEs são as duas formas
+  principais de quebrar um problema grande em partes menores dentro do próprio SQL.</p>
+  <h3>Subqueries — consultas dentro de consultas</h3>
+  <h4>Exemplo 22 — subquery no WHERE</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_22.sql</div></div>
+  <pre class="code-body"><code>SELECT nome_cliente
+FROM clientes
+WHERE id IN (
+  SELECT cliente_id
+  FROM vendas
+  WHERE valor &gt; 5000
+);</code></pre>
+</div><p>Retorna os clientes que possuem ao menos uma venda acima de R$ 5.000.</p>
+  <h4>Exemplo 23 — subquery no FROM</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_23.sql</div></div>
+  <pre class="code-body"><code>SELECT regiao, media_mensal
+FROM (
+  SELECT
+    regiao,
+    AVG(valor) AS media_mensal
+  FROM vendas
+  GROUP BY regiao
+) vendas_regiao
+WHERE media_mensal &gt; 1000;</code></pre>
+</div>
+  <h4>Exemplo 24 — subquery correlacionada</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_24.sql</div></div>
+  <pre class="code-body"><code>SELECT nome_cliente
+FROM clientes c
+WHERE EXISTS (
+  SELECT 1
+  FROM vendas v
+  WHERE v.cliente_id = c.id
+    AND v.valor &gt; 10000
+);</code></pre>
+</div><p>Diferente da subquery comum, a correlacionada faz referência a uma coluna da consulta externa (c.id) — é reavaliada linha a linha.</p>
+  <h3>CTE — Common Table Expression</h3>
+  <p>Uma CTE é uma tabela temporária definida com a cláusula WITH, existindo apenas durante a execução daquela
+  consulta. Ela organiza lógicas complexas em blocos legíveis, evitando repetir a mesma subquery várias vezes.</p>
+  <h4>Exemplo 25 — CTE simples</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_25.sql</div></div>
+  <pre class="code-body"><code>WITH vendas_totais AS (
+  SELECT
+    cliente_id,
+    SUM(valor) AS total
+  FROM vendas
+  GROUP BY cliente_id
+)
+SELECT *
+FROM vendas_totais
+WHERE total &gt; 1000;</code></pre>
+</div>
+  <h4>Exemplo 26 — múltiplas CTEs encadeadas</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_26.sql</div></div>
+  <pre class="code-body"><code>WITH vendas_mes AS (
+  SELECT
+    cliente_id,
+    TO_CHAR(data_venda,&#x27;YYYY-MM&#x27;) AS mes,
+    SUM(valor) AS total_mes
+  FROM vendas
+  GROUP BY cliente_id, TO_CHAR(data_venda,&#x27;YYYY-MM&#x27;)
+),
+media_cliente AS (
+  SELECT
+    cliente_id,
+    AVG(total_mes) AS media_mensal
+  FROM vendas_mes
+  GROUP BY cliente_id
+)
+SELECT * FROM media_cliente
+WHERE media_mensal &gt; 2000;</code></pre>
+</div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Quando uma consulta ultrapassa três níveis de subquery aninhada, é sinal de que ela deveria virar uma CTE. A leitura fica linear — de cima para baixo — em vez de espiralada de dentro para fora.</p></div>
+  <h3>Quando usar cada abordagem</h3>
+  <div class="table-wrap"><table><thead><tr><th>Situação</th><th>Melhor abordagem</th></tr></thead><tbody><tr><td>Filtro simples baseado em outra tabela</td><td>Subquery no WHERE (IN / EXISTS)</td></tr><tr><td>Resultado intermediário reaproveitado várias vezes</td><td>CTE</td></tr><tr><td>Consulta com muitas etapas de transformação</td><td>CTE encadeada</td></tr><tr><td>Verificar apenas existência de relacionamento</td><td>EXISTS (subquery correlacionada)</td></tr></tbody></table></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Subqueries resolvem partes de um problema dentro de outra consulta — no WHERE, no FROM ou de forma correlacionada.</li><li>CTEs (WITH) organizam lógicas complexas em blocos nomeados e legíveis.</li><li>Quando uma consulta fica difícil de ler de dentro para fora, é hora de transformar as subqueries em CTEs.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Reescreva uma subquery aninhada do seu trabalho como uma CTE.</li><li>Escreva uma consulta com EXISTS que verifique se um cliente tem pelo menos um pedido em aberto.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-8" class="chapter-nav-btn" data-target="cap-8">← Anterior</a><a href="#cap-10" class="chapter-nav-btn primary" data-target="cap-10">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-10" data-id="cap-10">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 10 · Window Functions</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Window functions enxergam a linha e a vizinhança dela ao mesmo tempo."</blockquote>
+  <p>Diferente de GROUP BY, que resume várias linhas em uma só, as window functions calculam um valor para
+  cada linha, considerando uma "janela" de linhas relacionadas — sem perder o detalhe original.</p>
+  <h3>A cláusula OVER()</h3>
+  <p>Toda window function usa OVER(), opcionalmente combinada com PARTITION BY (para dividir os dados em
+  grupos) e ORDER BY (para definir a ordem dentro de cada grupo).</p>
+  <h4>Exemplo 27 — ROW_NUMBER()</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_27.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  equipamento,
+  data_evento,
+  ROW_NUMBER() OVER(
+    PARTITION BY equipamento
+    ORDER BY data_evento DESC
+  ) AS ordem
+FROM eventos;</code></pre>
+</div><p>Numera os eventos de cada equipamento, do mais recente (1) para o mais antigo. Filtrar "ordem = 1" retorna o último evento de cada equipamento.</p>
+  <h4>Exemplo 28 — RANK() e DENSE_RANK()</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_28.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  vendedor,
+  total_vendas,
+  RANK() OVER(ORDER BY total_vendas DESC) AS posicao,
+  DENSE_RANK() OVER(ORDER BY total_vendas DESC) AS posicao_densa
+FROM ranking_vendedores;</code></pre>
+</div><p>RANK() pula números quando há empate (1, 2, 2, 4). DENSE_RANK() não pula (1, 2, 2, 3).</p>
+  <h4>Exemplo 29 — NTILE()</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_29.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  cliente_id,
+  total_compras,
+  NTILE(4) OVER(ORDER BY total_compras DESC) AS quartil
+FROM resumo_clientes;</code></pre>
+</div><p>Divide os clientes em 4 grupos (quartis) de tamanho igual, do maior para o menor valor — muito usado em segmentação.</p>
+  <h4>Exemplo 30 — LAG() e LEAD()</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_30.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  mes,
+  faturamento,
+  LAG(faturamento) OVER(ORDER BY mes) AS mes_anterior,
+  LEAD(faturamento) OVER(ORDER BY mes) AS mes_seguinte
+FROM faturamento_mensal;</code></pre>
+</div><p>LAG traz o valor da linha anterior; LEAD traz o valor da linha seguinte — essenciais para calcular variação mês a mês sem precisar de self-join.</p>
+  <h4>Exemplo 31 — variação percentual com LAG</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_31.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  mes,
+  faturamento,
+  ROUND(
+    (faturamento - LAG(faturamento) OVER(ORDER BY mes))
+    / LAG(faturamento) OVER(ORDER BY mes) * 100, 2
+  ) AS variacao_percentual
+FROM faturamento_mensal;</code></pre>
+</div><div class="info-box box-caso"><span class="tag">📁 Caso Real</span><p>Um analista precisava identificar o último status de cada equipamento em uma base com milhões de eventos. Antes: uma subquery correlacionada levava mais de 40 segundos. Depois de trocar por ROW_NUMBER() OVER(PARTITION BY equipamento ORDER BY data_evento DESC), o tempo caiu para menos de 3 segundos.</p></div>
+  <h3>Aplicações práticas</h3>
+  <ul class="plain-list">
+    <li>Último status de um item (ROW_NUMBER)</li>
+    <li>Ranking de vendedores ou produtos (RANK / DENSE_RANK)</li>
+    <li>Segmentação em grupos (NTILE)</li>
+    <li>Comparação mês a mês (LAG / LEAD)</li>
+    <li>Cálculo de médias móveis</li>
+  </ul>
+  <div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Window functions calculam um valor por linha, sem colapsar o detalhe como o GROUP BY faz.</li><li>ROW_NUMBER, RANK e DENSE_RANK resolvem problemas de ordenação e ranking.</li><li>LAG e LEAD comparam uma linha com a anterior ou a seguinte — ideal para variação no tempo.</li><li>PARTITION BY funciona como um "GROUP BY dentro da janela", sem agregar as linhas.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escreva uma consulta que retorne a segunda maior venda de cada vendedor usando DENSE_RANK.</li><li>Calcule a variação percentual de faturamento mês a mês de uma tabela fictícia usando LAG.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-9" class="chapter-nav-btn" data-target="cap-9">← Anterior</a><a href="#cap-11" class="chapter-nav-btn primary" data-target="cap-11">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-11" data-id="cap-11">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 11 · Performance, Índices e EXISTS × IN</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Uma consulta correta entrega resultado. Uma consulta otimizada entrega resultado com eficiência."</blockquote>
+  <p>À medida que o volume de dados cresce, performance se torna fundamental. Uma consulta que funciona em mil
+  registros pode falhar — ou travar o banco — com milhões.</p>
+  <h3>Índices</h3>
+  <p>Um índice funciona como o sumário de um livro: em vez de percorrer a tabela inteira, o banco vai direto ao
+  ponto. Colunas usadas com frequência em WHERE, JOIN e ORDER BY são boas candidatas a índice.</p>
+  <h4>Exemplo 32 — criando um índice</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_32.sql</div></div>
+  <pre class="code-body"><code>CREATE INDEX idx_vendas_cliente
+ON vendas(cliente_id);</code></pre>
+</div>
+  <h4>Exemplo 33 — índice composto</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_33.sql</div></div>
+  <pre class="code-body"><code>CREATE INDEX idx_vendas_regiao_data
+ON vendas(regiao, data_venda);</code></pre>
+</div><p>Um índice composto ajuda quando as duas colunas costumam ser filtradas juntas — a ordem das colunas no índice importa.</p><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Aplicar uma função diretamente sobre a coluna indexada no WHERE — por exemplo, UPPER(nome) = 'MARIA'. Isso normalmente impede o banco de usar o índice. Prefira padronizar o dado antes (na origem ou em uma coluna calculada) a aplicar função em tempo de consulta.</p></div>
+  <h3>EXISTS × IN</h3>
+  <p>Ambos verificam pertencimento, mas se comportam de forma diferente em volume grande de dados.</p>
+  <h4>Exemplo 34 — IN</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_34.sql</div></div>
+  <pre class="code-body"><code>SELECT nome_cliente
+FROM clientes
+WHERE id IN (SELECT cliente_id FROM vendas WHERE valor &gt; 5000);</code></pre>
+</div>
+  <h4>Exemplo 35 — EXISTS</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_35.sql</div></div>
+  <pre class="code-body"><code>SELECT nome_cliente
+FROM clientes c
+WHERE EXISTS (
+  SELECT 1 FROM vendas v
+  WHERE v.cliente_id = c.id AND v.valor &gt; 5000
+);</code></pre>
+</div><div class="table-wrap"><table><thead><tr><th>Cenário</th><th>Recomendação</th></tr></thead><tbody><tr><td>Subconsulta retorna poucos valores</td><td>IN costuma ter desempenho equivalente ou melhor</td></tr><tr><td>Subconsulta retorna muitos valores / tabela grande</td><td>EXISTS costuma ser mais eficiente — para no primeiro match</td></tr><tr><td>Precisa verificar apenas existência, não o valor</td><td>EXISTS é semanticamente mais claro</td></tr><tr><td>Lista pequena de valores fixos</td><td>IN (1, 2, 3) é mais direto</td></tr></tbody></table></div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Cuidado com NOT IN quando a subconsulta pode retornar NULL — o resultado costuma vir vazio de forma silenciosa. NOT EXISTS não sofre desse problema e é geralmente a escolha mais segura.</p></div>
+  <h3>Boas práticas gerais de performance</h3>
+  <ul class="plain-list">
+    <li>✔ Evite SELECT * em tabelas grandes</li>
+    <li>✔ Filtre o quanto antes na consulta</li>
+    <li>✔ Prefira EXISTS a NOT IN quando pode haver NULL</li>
+    <li>✔ Avalie o plano de execução (EXPLAIN PLAN) em consultas lentas</li>
+    <li>✔ Padronize dados antes do JOIN em vez de aplicar função na condição</li>
+  </ul>
+  <div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Índices aceleram buscas, mas função aplicada sobre a coluna indexada geralmente anula esse ganho.</li><li>IN costuma ser melhor para listas pequenas; EXISTS costuma ganhar em volumes grandes.</li><li>NOT IN com possibilidade de NULL é uma armadilha clássica — prefira NOT EXISTS.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Reescreva uma consulta com IN do seu trabalho usando EXISTS e compare o tempo de execução.</li><li>Identifique uma coluna muito filtrada em suas consultas do dia a dia que seria uma boa candidata a índice.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-10" class="chapter-nav-btn" data-target="cap-10">← Anterior</a><a href="#cap-12" class="chapter-nav-btn primary" data-target="cap-12">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-12" data-id="cap-12">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 12 · UNION × UNION ALL e CASE</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Combinar resultados e criar categorias são dois dos recursos mais usados — e mais mal compreendidos — do SQL."</blockquote>
+  <h3>UNION × UNION ALL</h3>
+  <p>Ambos combinam o resultado de duas ou mais consultas com a mesma estrutura de colunas. A diferença está em
+  como tratam duplicidades.</p>
+  <h4>Exemplo 36 — UNION</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_36.sql</div></div>
+  <pre class="code-body"><code>SELECT cliente_id FROM vendas_2025
+UNION
+SELECT cliente_id FROM vendas_2026;</code></pre>
+</div><p>Remove duplicatas automaticamente — exige um passo extra de ordenação/deduplicação, mais custoso.</p>
+  <h4>Exemplo 37 — UNION ALL</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_37.sql</div></div>
+  <pre class="code-body"><code>SELECT cliente_id FROM vendas_2025
+UNION ALL
+SELECT cliente_id FROM vendas_2026;</code></pre>
+</div><p>Mantém todas as linhas, inclusive duplicadas — mais rápido, porque não precisa comparar registros.</p><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Use UNION ALL sempre que souber que não haverá duplicidade real entre os conjuntos (por exemplo, dados de anos diferentes). Reserve o UNION para quando a deduplicação for realmente necessária — o ganho de performance é significativo em tabelas grandes.</p></div>
+  <h3>CASE — lógica condicional dentro do SELECT</h3>
+  <h4>Exemplo 38 — CASE simples</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_38.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  nome_cliente,
+  CASE
+    WHEN total_compras &gt; 10000 THEN &#x27;VIP&#x27;
+    WHEN total_compras &gt; 2000 THEN &#x27;REGULAR&#x27;
+    ELSE &#x27;NOVO&#x27;
+  END AS segmento
+FROM resumo_clientes;</code></pre>
+</div>
+  <h4>Exemplo 39 — CASE dentro de agregação (pivot manual)</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_39.sql</div></div>
+  <pre class="code-body"><code>SELECT
+  regiao,
+  SUM(CASE WHEN status = &#x27;PAGO&#x27; THEN valor ELSE 0 END) AS total_pago,
+  SUM(CASE WHEN status = &#x27;PENDENTE&#x27; THEN valor ELSE 0 END) AS total_pendente
+FROM pedidos
+GROUP BY regiao;</code></pre>
+</div><p>Essa técnica transforma valores de uma coluna em novas colunas — um "pivot" manual muito usado quando o banco não tem PIVOT nativo ou quando se prefere manter a lógica explícita em SQL puro.</p>
+  <h4>Exemplo 40 — CASE no ORDER BY</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_40.sql</div></div>
+  <pre class="code-body"><code>SELECT nome_cliente, status
+FROM clientes
+ORDER BY
+  CASE status
+    WHEN &#x27;VIP&#x27; THEN 1
+    WHEN &#x27;REGULAR&#x27; THEN 2
+    ELSE 3
+  END;</code></pre>
+</div><p>Permite uma ordenação customizada, fora da ordem alfabética ou numérica padrão.</p><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>UNION remove duplicatas (mais custoso); UNION ALL mantém tudo (mais rápido).</li><li>CASE cria lógica condicional dentro do SELECT, do GROUP BY ou do ORDER BY.</li><li>CASE dentro de SUM/COUNT é a forma mais comum de "pivotar" dados manualmente em SQL puro.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escreva uma consulta com CASE que classifique pedidos em "ATRASADO", "NO PRAZO" e "ANTECIPADO" com base em duas datas.</li><li>Combine duas tabelas fictícias com UNION ALL e explique por que UNION não seria necessário nesse caso.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-11" class="chapter-nav-btn" data-target="cap-11">← Anterior</a><a href="#cap-13" class="chapter-nav-btn primary" data-target="cap-13">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-13" data-id="cap-13">
+      <div class="page-eyebrow">Parte II · SQL Completo</div>
+      <h1>Capítulo 13 · Modelo SQL 3C e Boas Práticas Gerais</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Uma consulta tecnicamente perfeita que responde à pergunta errada ainda é um erro."</blockquote>
+  <p>Depois de dominar a sintaxe, o que separa um analista júnior de um sênior é o hábito de pensar antes de
+  escrever. O modelo SQL 3C existe exatamente para isso.</p>
+  <h3>O modelo SQL 3C</h3>
+  <p>Antes de escrever qualquer consulta, o analista de alta performance responde três perguntas: <b>Cliente</b>
+  (quem está pedindo o dado?), <b>Consulta</b> (o que precisa ser respondido?) e <b>Contexto</b> (de onde vem a
+  informação?).</p>
+  <div class="info-box box-caso"><span class="tag">📁 Caso Real</span><p>Um analista recebeu o pedido "quantos clientes ativos temos?". Sem aplicar o 3C, escreveu um COUNT direto na tabela de cadastro. Aplicando o 3C, descobriu que "Cliente" era o time financeiro (que considera ativo = pagamento em dia, não apenas cadastro sem cancelamento) — a consulta certa usava outra tabela.</p></div>
+  <h3>Checklist final de boas práticas SQL</h3>
+  <ul class="plain-list">
+    <li>✔ Evite SELECT * em ambientes produtivos</li>
+    <li>✔ Sempre use WHERE em UPDATE e DELETE</li>
+    <li>✔ Prefira EXISTS a NOT IN quando houver risco de NULL</li>
+    <li>✔ Padronize dados antes do JOIN, não durante</li>
+    <li>✔ Documente CTEs e subqueries complexas com comentários</li>
+    <li>✔ Valide a quantidade de registros antes e depois de cada transformação</li>
+    <li>✔ Use COMMIT de forma consciente — nunca "no automático" em produção</li>
+  </ul>
+  <div class="resumo"><h4>Resumo do capítulo</h4><ul><li>O modelo 3C (Cliente, Consulta, Contexto) evita o erro mais caro em SQL: responder à pergunta errada, com perfeição técnica.</li><li>Boas práticas de SQL não são sobre sintaxe — são sobre reduzir risco e aumentar confiabilidade.</li><li>A Parte II termina aqui; a Parte III aprofunda especificamente os JOINs profissionais.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Aplique o modelo 3C à última solicitação de dados que você recebeu — escreva as respostas para Cliente, Consulta e Contexto antes de escrever qualquer SQL.</li><li>Revise uma consulta recente sua usando o checklist final de boas práticas — quantos itens ela já cumpre?</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-12" class="chapter-nav-btn" data-target="cap-12">← Anterior</a><a href="#cap-14" class="chapter-nav-btn primary" data-target="cap-14">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-14" data-id="cap-14">
+      <div class="page-eyebrow">Parte III · JOINs Profissionais</div>
+      <h1>Capítulo 14 · Tipos de JOIN</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Um JOIN mal escolhido não gera erro de sintaxe — gera um número errado que ninguém percebe."</blockquote>
+  <p>Os dados normalmente estão separados em diferentes tabelas. Escolher o tipo certo de JOIN é o que
+  determina se o resultado representa a realidade do negócio ou uma versão distorcida dela.</p>
+  <h3>INNER JOIN</h3>
+  <p>Retorna apenas os registros que existem nas duas tabelas.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">inner_join.sql</div></div>
+  <pre class="code-body"><code>SELECT c.nome, v.valor
+FROM clientes c
+INNER JOIN vendas v
+  ON c.id = v.cliente_id;</code></pre>
+</div><p>Se um cliente nunca comprou, ele não aparece no resultado.</p>
+  <h3>LEFT JOIN</h3>
+  <p>Mantém todos os registros da tabela à esquerda, mesmo sem correspondência na tabela à direita. Útil para
+  identificar faltas, divergências e registros sem correspondência.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">left_join.sql</div></div>
+  <pre class="code-body"><code>SELECT c.nome, v.valor
+FROM clientes c
+LEFT JOIN vendas v
+  ON c.id = v.cliente_id;</code></pre>
+</div><p>Todo cliente aparece — quem nunca comprou aparece com valor NULL.</p>
+  <h4>Encontrando o que não tem correspondência</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">left_join_null.sql</div></div>
+  <pre class="code-body"><code>SELECT c.nome
+FROM clientes c
+LEFT JOIN vendas v
+  ON c.id = v.cliente_id
+WHERE v.cliente_id IS NULL;</code></pre>
+</div><p>Esse padrão (LEFT JOIN + WHERE ... IS NULL) é a forma clássica de encontrar "o que falta": clientes sem venda, pedidos sem pagamento, produtos sem estoque cadastrado.</p>
+  <h3>RIGHT JOIN</h3>
+  <p>O espelho do LEFT JOIN — mantém todos os registros da tabela à direita. Menos usado na prática, porque
+  geralmente é mais legível reescrever como LEFT JOIN invertendo a ordem das tabelas.</p>
+  <h3>FULL JOIN</h3>
+  <p>Mantém todos os registros de ambas as tabelas, com ou sem correspondência. Útil para comparar duas bases e
+  encontrar diferenças nos dois sentidos.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">full_join.sql</div></div>
+  <pre class="code-body"><code>SELECT c.nome, v.valor
+FROM clientes c
+FULL JOIN vendas v
+  ON c.id = v.cliente_id;</code></pre>
+</div>
+  <h3>CROSS JOIN</h3>
+  <p>Combina todas as linhas de uma tabela com todas as linhas de outra — produto cartesiano. Raramente é o que
+  se quer por acidente, mas é útil de propósito para gerar combinações (por exemplo, todos os meses × todos os
+  produtos, para preencher uma série temporal completa).</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">cross_join.sql</div></div>
+  <pre class="code-body"><code>SELECT m.mes, p.produto
+FROM meses m
+CROSS JOIN produtos p;</code></pre>
+</div><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Usar INNER JOIN quando o objetivo era "mostrar todos, mesmo sem correspondência". É o erro mais comum: linhas somem silenciosamente do resultado, e ninguém percebe até um número bater errado em um relatório mensal.</p></div>
+  <h3>Guia rápido de escolha</h3>
+  <div class="table-wrap"><table><thead><tr><th>Preciso de...</th><th>JOIN</th></tr></thead><tbody><tr><td>Apenas o que existe nas duas tabelas</td><td>INNER JOIN</td></tr><tr><td>Tudo da tabela principal, mesmo sem correspondência</td><td>LEFT JOIN</td></tr><tr><td>Tudo dos dois lados, mesmo sem correspondência</td><td>FULL JOIN</td></tr><tr><td>Encontrar o que está faltando de um lado</td><td>LEFT JOIN + WHERE IS NULL</td></tr><tr><td>Gerar todas as combinações possíveis</td><td>CROSS JOIN</td></tr></tbody></table></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>INNER JOIN retorna a interseção; LEFT/RIGHT JOIN preservam um dos lados; FULL JOIN preserva os dois.</li><li>LEFT JOIN + WHERE ... IS NULL é o padrão clássico para encontrar registros sem correspondência.</li><li>CROSS JOIN gera combinações — poderoso de propósito, perigoso por acidente.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escreva uma consulta que encontre todos os produtos que nunca foram vendidos.</li><li>Explique, com um exemplo, uma situação real em que um INNER JOIN esconderia dados importantes de um relatório.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-13" class="chapter-nav-btn" data-target="cap-13">← Anterior</a><a href="#cap-15" class="chapter-nav-btn primary" data-target="cap-15">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-15" data-id="cap-15">
+      <div class="page-eyebrow">Parte III · JOINs Profissionais</div>
+      <h1>Capítulo 15 · Granularidade e Cardinalidade</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Antes de escrever o JOIN, pergunte: uma linha aqui representa o quê, exatamente?"</blockquote>
+  <p>Granularidade e cardinalidade são os dois conceitos que mais explicam por que um JOIN "multiplica"
+  resultados de forma inesperada.</p>
+  <h3>Granularidade</h3>
+  <p>É o nível de detalhe que uma linha representa em uma tabela. Duas tabelas sobre o "mesmo assunto" podem
+  ter granularidades completamente diferentes.</p>
+  <div class="table-wrap"><table><thead><tr><th>Tabela</th><th>O que uma linha representa (granularidade)</th></tr></thead><tbody><tr><td>clientes</td><td>Um cliente</td></tr><tr><td>pedidos</td><td>Um pedido</td></tr><tr><td>itens_pedido</td><td>Um item dentro de um pedido</td></tr><tr><td>pagamentos</td><td>Uma parcela de um pagamento</td></tr></tbody></table></div><p>Ao juntar clientes (granularidade: cliente) com itens_pedido (granularidade: item do pedido), o resultado passa a ter a granularidade mais fina — um cliente com 3 pedidos de 2 itens cada aparecerá em 6 linhas.</p>
+  <h3>Cardinalidade</h3>
+  <p>É a relação entre as tabelas: quantos registros de uma tabela se relacionam com quantos registros da
+  outra.</p>
+  <div class="table-wrap"><table><thead><tr><th>Cardinalidade</th><th>Exemplo</th><th>Risco no JOIN</th></tr></thead><tbody><tr><td>1 : 1</td><td>Cliente e seu cadastro de endereço principal</td><td>Baixo — resultado não multiplica</td></tr><tr><td>1 : N</td><td>Cliente e seus vários pedidos</td><td>Médio — cliente se repete uma vez por pedido</td></tr><tr><td>N : N</td><td>Produtos e categorias (um produto pode ter várias categorias)</td><td>Alto — resultado pode crescer de forma combinatória</td></tr></tbody></table></div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Antes de qualquer JOIN em uma tabela nova, rode um SELECT COUNT(*) e um SELECT COUNT(DISTINCT chave) nela. Se os números forem diferentes, a granularidade não é "uma linha por chave" — e isso muda a forma como você deve fazer o JOIN.</p></div>
+  <h3>Exemplo prático de mudança de granularidade</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">mudanca_granularidade.sql</div></div>
+  <pre class="code-body"><code>-- Granularidade: pedido
+SELECT COUNT(*) FROM pedidos; -- 10.000
+
+-- Após JOIN com itens_pedido (N itens por pedido)
+SELECT COUNT(*)
+FROM pedidos p
+JOIN itens_pedido i ON p.id = i.pedido_id; -- 34.500</code></pre>
+</div><p>O aumento de 10.000 para 34.500 não é um erro — é o efeito esperado de mudar a granularidade de "pedido" para "item de pedido". O problema é quando esse aumento acontece sem que o analista perceba.</p><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Granularidade é o que uma linha representa; cardinalidade é como duas tabelas se relacionam.</li><li>JOINs 1:N e N:N podem multiplicar o número de linhas do resultado — de forma esperada ou não.</li><li>Sempre confirme a granularidade de uma tabela nova antes de fazer o primeiro JOIN com ela.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Para três tabelas do seu ambiente de trabalho, escreva qual é a granularidade de cada uma (o que representa uma linha).</li><li>Identifique um JOIN 1:N no seu trabalho e explique o que aconteceria com um SUM() se ele fosse aplicado antes de agregar a tabela "N" corretamente.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-14" class="chapter-nav-btn" data-target="cap-14">← Anterior</a><a href="#cap-16" class="chapter-nav-btn primary" data-target="cap-16">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-16" data-id="cap-16">
+      <div class="page-eyebrow">Parte III · JOINs Profissionais</div>
+      <h1>Capítulo 16 · Duplicidades e Como Depurar JOINs</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Todo JOIN que \u201cparece certo\u201d merece uma segunda checagem de quantidade."</blockquote>
+  <p>A duplicidade é o problema mais comum — e mais silencioso — em consultas com JOIN. Este capítulo apresenta
+  um roteiro prático para identificar e corrigir.</p>
+  <h3>Como a duplicidade aparece</h3>
+  <div class="table-wrap"><table><thead><tr><th>Antes do JOIN</th><th>Depois do JOIN</th></tr></thead><tbody><tr><td>100 clientes</td><td>150 linhas no resultado</td></tr></tbody></table></div><p>O volume aumentou. A pergunta que todo analista precisa se fazer: isso é um crescimento real (granularidade mudou de propósito) ou uma duplicidade indevida (chave de JOIN não é única do lado esperado)?</p>
+  <h3>Roteiro de depuração de JOINs</h3>
+  <h4>Passo 1 — Confirme a contagem antes do JOIN</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">passo_1.sql</div></div>
+  <pre class="code-body"><code>SELECT COUNT(*) FROM clientes;</code></pre>
+</div>
+  <h4>Passo 2 — Confirme a unicidade da chave na tabela do lado direito</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">passo_2.sql</div></div>
+  <pre class="code-body"><code>SELECT cliente_id, COUNT(*)
+FROM vendas
+GROUP BY cliente_id
+HAVING COUNT(*) &gt; 1;</code></pre>
+</div><p>Se essa consulta retornar linhas, cada cliente pode ter múltiplas vendas — o JOIN vai multiplicar, e isso pode ser esperado ou não, dependendo do objetivo.</p>
+  <h4>Passo 3 — Compare a contagem depois do JOIN</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">passo_3.sql</div></div>
+  <pre class="code-body"><code>SELECT COUNT(*)
+FROM clientes c
+LEFT JOIN vendas v ON c.id = v.cliente_id;</code></pre>
+</div>
+  <h4>Passo 4 — Isole um caso específico para investigar</h4>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">passo_4.sql</div></div>
+  <pre class="code-body"><code>SELECT *
+FROM clientes c
+LEFT JOIN vendas v ON c.id = v.cliente_id
+WHERE c.id = 123;</code></pre>
+</div><p>Ver o resultado de um único ID específico, linha por linha, é frequentemente mais revelador do que olhar o agregado.</p><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Assumir que "o número aumentou, então tem duplicidade" sem verificar. Às vezes o aumento é esperado (mudança de granularidade legítima) — o erro é não checar e não conseguir explicar o motivo com uma consulta de suporte.</p></div>
+  <h3>Checklist completo de JOINs</h3>
+  <ul class="plain-list">
+    <li>✔ Contei os registros antes e depois do JOIN</li>
+    <li>✔ Verifiquei se a chave é única na tabela do lado "muitos"</li>
+    <li>✔ Escolhi o tipo de JOIN certo para o objetivo (não incluir/excluir por padrão)</li>
+    <li>✔ Padronizei os dados de ambos os lados antes de comparar</li>
+    <li>✔ Testei com um ID isolado para confirmar visualmente o resultado</li>
+    <li>✔ Validei o resultado final com alguém que conhece a regra de negócio</li>
+  </ul>
+  <div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Duplicidade após um JOIN sempre tem uma explicação — encontrá-la é uma questão de método, não sorte.</li><li>Comparar contagens antes/depois do JOIN e checar unicidade de chave resolve a maioria dos casos.</li><li>Isolar um ID específico é geralmente o jeito mais rápido de visualizar o problema.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Aplique o roteiro de 4 passos a um JOIN real do seu trabalho e documente o resultado de cada passo.</li><li>Escreva a consulta que identifica, em uma tabela fictícia "pedidos", quais chaves "cliente_id" aparecem mais de uma vez.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-15" class="chapter-nav-btn" data-target="cap-15">← Anterior</a><a href="#cap-17" class="chapter-nav-btn primary" data-target="cap-17">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-17" data-id="cap-17">
+      <div class="page-eyebrow">Parte III · JOINs Profissionais</div>
+      <h1>Capítulo 17 · Padronização de Dados para JOINs Confiáveis</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"A qualidade de um JOIN depende diretamente da qualidade dos dados que chegam até ele."</blockquote>
+  <p>A causa mais comum de JOINs que "não batem" não é a lógica da consulta — é a falta de padronização dos
+  dados nas duas pontas. Oito cuidados resolvem a maior parte dos casos.</p>
+  <div class="table-wrap"><table><thead><tr><th>#</th><th>Cuidado</th><th>Como resolver</th></tr></thead><tbody><tr><td>1</td><td>Padronize letras</td><td>UPPER(campo) — elimina diferenças entre maiúsculas e minúsculas</td></tr><tr><td>2</td><td>Remova espaços desnecessários</td><td>TRIM(campo) — elimina espaços no início e no fim</td></tr><tr><td>3</td><td>Elimine espaços duplicados e caracteres invisíveis</td><td>REGEXP_REPLACE(campo,'[[:space:]]+',' ') — remove tabulações e múltiplos espaços</td></tr><tr><td>4</td><td>Trate valores nulos</td><td>NVL(campo,'SEM_VALOR') — evita que NULL quebre a comparação</td></tr><tr><td>5</td><td>Padronize caracteres especiais</td><td>REGEXP_REPLACE(campo,'[^A-Z0-9]','') — útil para CPFs, telefones e códigos</td></tr><tr><td>6</td><td>Compare tipos iguais</td><td>TO_CHAR(número) / TO_NUMBER(texto) — nunca compare texto com número</td></tr><tr><td>7</td><td>Padronize datas</td><td>TRUNC(data) ou TO_DATE(campo,'YYYYMMDD') — evita diferenças de horário e formato</td></tr><tr><td>8</td><td>Cuide da performance</td><td>Evite aplicar funções diretamente na condição do JOIN em tabelas grandes</td></tr></tbody></table></div>
+  <h3>Sequência recomendada para chaves textuais</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">padronizacao_chave.sql</div></div>
+  <pre class="code-body"><code>UPPER(
+  TRIM(
+    REGEXP_REPLACE(campo,&#x27;[[:space:]]+&#x27;,&#x27; &#x27;)
+  )
+)</code></pre>
+</div><p>Essa combinação resolve grande parte das inconsistências encontradas em integrações entre sistemas diferentes.</p><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>ON UPPER(TRIM(a.nome)) = UPPER(TRIM(b.nome)) — funções aplicadas diretamente no JOIN prejudicam o uso de índices em tabelas grandes.</p></div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Padronize os dados antes, em uma CTE, VIEW ou etapa de ETL — não na condição do JOIN. Resultado: consultas mais rápidas, melhor uso de índices e código mais organizado.</p></div>
+  <h3>Exemplo completo — padronizando antes do JOIN</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_padronizacao.sql</div></div>
+  <pre class="code-body"><code>WITH clientes_padronizados AS (
+  SELECT
+    id,
+    UPPER(TRIM(nome)) AS nome_padronizado
+  FROM clientes
+),
+vendas_padronizadas AS (
+  SELECT
+    cliente_id,
+    UPPER(TRIM(nome_cliente)) AS nome_padronizado,
+    valor
+  FROM vendas_externas
+)
+SELECT c.id, v.valor
+FROM clientes_padronizados c
+JOIN vendas_padronizadas v
+  ON c.nome_padronizado = v.nome_padronizado;</code></pre>
+</div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>8 cuidados de padronização resolvem a maior parte dos JOINs "que não batem".</li><li>A sequência UPPER + TRIM + REGEXP_REPLACE resolve boa parte das chaves textuais problemáticas.</li><li>Padronizar em uma CTE/VIEW/ETL, antes do JOIN, preserva a performance dos índices.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escolha uma integração entre dois sistemas do seu trabalho e liste quais dos 8 cuidados já são aplicados — e quais faltam.</li><li>Reescreva um JOIN existente aplicando a padronização em uma CTE antes da junção, em vez de aplicar a função na condição ON.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-16" class="chapter-nav-btn" data-target="cap-16">← Anterior</a><a href="#cap-18" class="chapter-nav-btn primary" data-target="cap-18">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-18" data-id="cap-18">
+      <div class="page-eyebrow">Parte III · JOINs Profissionais</div>
+      <h1>Capítulo 18 · Checklist Completo de JOINs Profissionais</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Um checklist não substitui o raciocínio — ele garante que o raciocínio não pule etapas sob pressão de prazo."</blockquote>
+  <p>Este capítulo fecha a Parte III consolidando, em um único checklist, tudo o que foi visto sobre tipos de
+  JOIN, granularidade, cardinalidade, duplicidade e padronização.</p>
+  <h3>Antes de escrever o JOIN</h3>
+  <ul class="plain-list">
+    <li>☐ Sei o que uma linha representa em cada tabela (granularidade).</li>
+    <li>☐ Sei a cardinalidade da relação entre as tabelas (1:1, 1:N, N:N).</li>
+    <li>☐ Sei qual coluna será a chave de junção e se ela é única do lado esperado.</li>
+    <li>☐ Os dados das duas pontas estão padronizados (letras, espaços, tipos, datas).</li>
+  </ul>
+  <h3>Ao escolher o tipo de JOIN</h3>
+  <ul class="plain-list">
+    <li>☐ Escolhi INNER, LEFT, RIGHT ou FULL de forma consciente — não por padrão.</li>
+    <li>☐ Se preciso encontrar "o que falta", usei LEFT JOIN + WHERE IS NULL.</li>
+    <li>☐ Evitei CROSS JOIN não intencional (JOIN sem condição ON).</li>
+  </ul>
+  <h3>Depois de escrever o JOIN</h3>
+  <ul class="plain-list">
+    <li>☐ Comparei a contagem de linhas antes e depois do JOIN.</li>
+    <li>☐ Verifiquei se o aumento (se houve) é esperado pela granularidade.</li>
+    <li>☐ Testei com um ID isolado para confirmar visualmente.</li>
+    <li>☐ Validei o resultado final com quem conhece a regra de negócio.</li>
+  </ul>
+  <div class="info-box box-caso"><span class="tag">📁 Caso Real</span><p>Uma consulta de faturamento mensal apresentava valores 40% acima do esperado. A causa: um LEFT JOIN com uma tabela de descontos que tinha múltiplas linhas por pedido (histórico de alterações de desconto), quando o esperado era apenas o desconto vigente. A correção: filtrar a tabela de descontos para "apenas o registro mais recente" usando ROW_NUMBER() antes do JOIN — o mesmo padrão do Capítulo 10.</p></div>
+  <h3>Conectando os capítulos da Parte III</h3>
+  <div class="table-wrap"><table><thead><tr><th>Problema</th><th>Capítulo que resolve</th></tr></thead><tbody><tr><td>Escolher o tipo certo de JOIN</td><td>Capítulo 14</td></tr><tr><td>Entender por que o resultado multiplicou</td><td>Capítulo 15</td></tr><tr><td>Encontrar e corrigir a duplicidade</td><td>Capítulo 16</td></tr><tr><td>Evitar que a causa se repita</td><td>Capítulo 17</td></tr></tbody></table></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>JOINs profissionais dependem de três disciplinas: escolher o tipo certo, entender granularidade/cardinalidade e padronizar os dados antes de comparar.</li><li>O checklist desta seção deve virar hábito — especialmente antes de entregar um número para a liderança.</li><li>A Parte IV avança para ETL e KNIME — onde boa parte dessa padronização deveria acontecer antes mesmo do SQL analítico.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Percorra o checklist completo deste capítulo usando uma consulta real do seu trabalho — marque o que já é seguido e o que precisa virar rotina.</li><li>Escreva, em uma frase, a "causa raiz" mais comum de duplicidade nos JOINs que você já viu — e qual dos 8 cuidados do Capítulo 17 a evitaria.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-17" class="chapter-nav-btn" data-target="cap-17">← Anterior</a><a href="#cap-19" class="chapter-nav-btn primary" data-target="cap-19">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-19" data-id="cap-19">
+      <div class="page-eyebrow">Parte IV · ETL e KNIME</div>
+      <h1>Capítulo 19 · Arquitetura ETL</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Dados confiáveis não acontecem por acaso. Eles são construídos através de processos bem definidos."</blockquote>
+  <p>ETL representa três etapas essenciais do tratamento de dados: Extract (extração), Transform
+  (transformação) e Load (carga). Entender essa arquitetura é o que separa um analista que só consome
+  dashboards de um que consegue construir a base deles.</p>
+  <h3>O fluxo ETL completo</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">fluxo_etl.txt</div></div>
+  <pre class="code-body"><code>FONTE DE DADOS → EXTRAÇÃO → STAGING AREA → TRATAMENTO / TRANSFORMAÇÃO
+  → VALIDAÇÃO → CARGA (DATA WAREHOUSE) → DASHBOARD</code></pre>
+</div>
+  <h3>Extract — extração</h3>
+  <p>A extração busca dados nas fontes originais: bancos relacionais, arquivos, planilhas ou APIs. Um ponto
+  frequentemente esquecido: a extração deveria alterar o mínimo possível os dados de origem — transformação
+  vem depois, na etapa própria.</p>
+  <h3>Staging Area</h3>
+  <p>Área intermediária onde os dados extraídos ficam temporariamente, antes do tratamento. Ela isola o
+  sistema de origem do processo de transformação, evitando que uma falha no ETL afete o sistema operacional.</p>
+  <h3>Transform — transformação</h3>
+  <p>Nesta etapa acontecem limpeza, padronização, conversões, cálculos e aplicação de regras de negócio.</p>
+  <div class="table-wrap"><table><thead><tr><th>Entrada</th><th>Saída (padronizada)</th></tr></thead><tbody><tr><td>sp</td><td>SÃO PAULO</td></tr><tr><td>São Paulo</td><td>SÃO PAULO</td></tr><tr><td>SAO PAULO</td><td>SÃO PAULO</td></tr></tbody></table></div>
+  <h3>Load — carga</h3>
+  <p>Após o tratamento, os dados são disponibilizados no Data Warehouse para consumo em relatórios, dashboards
+  e modelos analíticos.</p>
+  <div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Quanto mais tratamento acontece no ETL, menos trabalho — e menos risco de inconsistência — sobra para a camada de BI. Um dashboard nunca deveria carregar lógica de negócio que poderia (e deveria) estar no ETL.</p></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>ETL = Extract, Transform, Load — extração, tratamento e disponibilização dos dados.</li><li>A Staging Area isola o sistema de origem do processo de transformação.</li><li>Regras de negócio pertencem ao ETL, não ao dashboard.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Desenhe o fluxo ETL de um processo real do seu trabalho, identificando fonte, staging, transformação e carga.</li><li>Liste 3 regras de negócio que hoje estão "presas" dentro de um dashboard e deveriam estar no ETL.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-18" class="chapter-nav-btn" data-target="cap-18">← Anterior</a><a href="#cap-20" class="chapter-nav-btn primary" data-target="cap-20">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-20" data-id="cap-20">
+      <div class="page-eyebrow">Parte IV · ETL e KNIME</div>
+      <h1>Capítulo 20 · Extração de Dados: Oracle, Hive, APIs e Excel</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Cada fonte de dados tem sua própria lógica — e suas próprias armadilhas."</blockquote>
+  <p>Na prática, um analista raramente trabalha com uma única fonte de dados. Este capítulo detalha as
+  particularidades das fontes mais comuns.</p>
+  <h3>Extração de banco Oracle</h3>
+  <p>Extração direta via SQL é o caminho mais comum. Pontos de atenção: volume de dados retornado, uso de
+  filtros na origem (não trazer tudo para tratar depois) e cuidado com bloqueios em tabelas de produção.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">extracao_oracle.sql</div></div>
+  <pre class="code-body"><code>SELECT *
+FROM vendas
+WHERE data_venda &gt;= TRUNC(SYSDATE) - 30;</code></pre>
+</div><p>Filtrar por período diretamente na extração evita trazer anos de histórico desnecessariamente.</p>
+  <h3>Extração de Hive</h3>
+  <p>Ambientes de Big Data (Hadoop/Hive) armazenam grandes volumes de dados distribuídos. A extração via
+  HiveQL é sintaticamente parecida com SQL, mas o volume e a forma de armazenamento (particionado) exigem
+  atenção redobrada.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">extracao_hive.sql</div></div>
+  <pre class="code-body"><code>SELECT *
+FROM eventos_particionados
+WHERE ano = 2026 AND mes = 7;</code></pre>
+</div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Sempre filtre pela coluna de partição em consultas Hive. Ignorar a partição obriga o motor a varrer todo o dataset, o que pode levar de segundos a horas dependendo do volume.</p></div>
+  <h3>Extração de APIs</h3>
+  <p>APIs retornam dados normalmente em formato JSON, exigindo uma etapa extra de conversão para formato
+  tabular antes do tratamento.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">exemplo_api.json</div></div>
+  <pre class="code-body"><code>{
+  &quot;cliente_id&quot;: 123,
+  &quot;nome&quot;: &quot;Maria Silva&quot;,
+  &quot;pedidos&quot;: [
+    { &quot;id&quot;: 1, &quot;valor&quot;: 250.00 },
+    { &quot;id&quot;: 2, &quot;valor&quot;: 130.50 }
+  ]
+}</code></pre>
+</div><p>Nesse exemplo, "pedidos" é uma lista aninhada — ao transformar em tabela, cada pedido deveria virar uma linha própria, repetindo os dados do cliente (o mesmo princípio de granularidade visto na Parte III).</p>
+  <h3>Extração de Excel</h3>
+  <p>Planilhas são fontes comuns, especialmente em processos que ainda não foram totalmente automatizados.
+  Riscos típicos: cabeçalhos fora do padrão, células mescladas, abas com nomes inconsistentes e fórmulas
+  quebradas quando movidas de posição.</p>
+  <div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Importar uma planilha diretamente sem validar tipos de coluna. Uma coluna de "código" que parece numérica no Excel pode conter um valor como "007" — que vira "7" ao ser importado como número, quebrando o relacionamento com outras tabelas.</p></div>
+  <h3>Comparativo das fontes</h3>
+  <div class="table-wrap"><table><thead><tr><th>Fonte</th><th>Formato típico</th><th>Maior risco</th></tr></thead><tbody><tr><td>Oracle</td><td>Tabelas relacionais</td><td>Volume sem filtro na origem</td></tr><tr><td>Hive</td><td>Tabelas particionadas</td><td>Ignorar a coluna de partição</td></tr><tr><td>API</td><td>JSON aninhado</td><td>Granularidade errada ao "achatar" o JSON</td></tr><tr><td>Excel</td><td>Planilha</td><td>Tipos de dado inconsistentes e formatação manual</td></tr></tbody></table></div><div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Cada fonte de dados tem uma armadilha típica — Oracle (volume), Hive (partição), API (granularidade do JSON) e Excel (tipos e formatação).</li><li>Filtrar na origem, sempre que possível, é mais eficiente do que filtrar depois de extrair tudo.</li><li>Dados de planilha exigem validação extra de tipo antes de entrar no fluxo de tratamento.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Para uma fonte de dados que você usa hoje, liste o principal risco de qualidade dela e como você mitiga.</li><li>Escreva a consulta de extração de uma tabela Hive fictícia particionada por ano e mês, filtrando apenas o mês atual.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-19" class="chapter-nav-btn" data-target="cap-19">← Anterior</a><a href="#cap-21" class="chapter-nav-btn primary" data-target="cap-21">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-21" data-id="cap-21">
+      <div class="page-eyebrow">Parte IV · ETL e KNIME</div>
+      <h1>Capítulo 21 · Fluxos em KNIME e Automações</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Automatizar não é eliminar o analista do processo — é liberar o analista para o que exige julgamento."</blockquote>
+  <p>O KNIME permite criar fluxos visuais de processamento de dados, unindo extração, tratamento e carga em um
+  pipeline reproduzível — sem depender de scripts soltos executados manualmente.</p>
+  <h3>Anatomia de um fluxo KNIME</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">fluxo_knime.txt</div></div>
+  <pre class="code-body"><code>ENTRADA → FILTRO → TRATAMENTO → REGRA DE NEGÓCIO → VALIDAÇÃO → SAÍDA</code></pre>
+</div>
+  <h3>Truque de produtividade: criando tabelas com WHERE 1=0</h3>
+  <p>Criar uma tabela coluna por coluna manualmente é lento e sujeito a erro — exige definir cada tipo e
+  tamanho, com risco de incompatibilidade entre campos. Uma alternativa consagrada: criar a tabela a partir do
+  próprio SELECT que já tem os JOINs e as transformações necessárias, usando WHERE 1=0.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">where_1_0.sql</div></div>
+  <pre class="code-body"><code>CREATE TABLE TB_RESULTADO AS
+SELECT
+  A.ID,
+  A.NOME,
+  B.STATUS,
+  B.DATA_CADASTRO,
+  C.TECNOLOGIA,
+  (A.VALOR_TOTAL * 1.10) AS VALOR_COM_TAXA
+FROM CLIENTES A
+LEFT JOIN STATUS B ON A.ID = B.ID
+LEFT JOIN TECNOLOGIAS C ON A.TEC_ID = C.ID
+WHERE 1 = 0;</code></pre>
+</div><p>O WHERE 1=0 nunca é verdadeiro — nenhum dado é inserido, apenas a estrutura da tabela é criada, exatamente como o resultado do SELECT (tipos de dado herdados automaticamente).</p><div class="table-wrap"><table><thead><tr><th>Coluna</th><th>Tipo de dado</th><th>Nulo</th></tr></thead><tbody><tr><td>ID</td><td>NUMBER</td><td>Y</td></tr><tr><td>NOME</td><td>VARCHAR2(100)</td><td>Y</td></tr><tr><td>STATUS</td><td>VARCHAR2(30)</td><td>Y</td></tr><tr><td>DATA_CADASTRO</td><td>DATE</td><td>Y</td></tr><tr><td>TECNOLOGIA</td><td>VARCHAR2(50)</td><td>Y</td></tr><tr><td>VALOR_COM_TAXA</td><td>NUMBER</td><td>Y</td></tr></tbody></table></div><div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Se depois algum campo textual precisar de mais espaço, ajuste apenas a coluna necessária com ALTER TABLE — não recrie a tabela inteira: ALTER TABLE TB_RESULTADO MODIFY (NOME VARCHAR2(200));</p></div>
+  <h3>Por que isso importa dentro do KNIME</h3>
+  <p>Esse padrão é especialmente útil em fluxos de ETL e Data Warehouse: a estrutura da tabela de destino fica
+  100% alinhada com a query de origem, reduzindo erros de incompatibilidade de tipo entre o fluxo do KNIME e o
+  banco de destino — e economizando horas de definição manual de schema.</p>
+  <h3>Boas práticas de automação</h3>
+  <ul class="plain-list">
+    <li>✔ Menos trabalho manual repetitivo</li>
+    <li>✔ Menor risco de erro humano</li>
+    <li>✔ Maior velocidade de execução</li>
+    <li>✔ Padronização entre execuções</li>
+    <li>✔ Rastreabilidade — cada etapa do fluxo fica documentada visualmente</li>
+  </ul>
+  <div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Um fluxo KNIME é um pipeline visual reproduzível: entrada, filtro, tratamento, regra, validação, saída.</li><li>WHERE 1=0 cria a estrutura exata de uma tabela a partir de um SELECT complexo, sem inserir dados.</li><li>Automação bem feita reduz erro humano e libera tempo do analista para análise, não para execução repetitiva.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Identifique um processo manual e repetitivo do seu trabalho que poderia virar um fluxo automatizado.</li><li>Escreva um CREATE TABLE ... AS SELECT ... WHERE 1=0 para uma tabela de resultado com pelo menos 3 JOINs fictícios.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-20" class="chapter-nav-btn" data-target="cap-20">← Anterior</a><a href="#cap-22" class="chapter-nav-btn primary" data-target="cap-22">Próximo →</a></div>
+    </article>
+    <article class="page" id="cap-22" data-id="cap-22">
+      <div class="page-eyebrow">Parte IV · ETL e KNIME</div>
+      <h1>Capítulo 22 · Boas Práticas e Tratamento de Erros em ETL</h1>
+      
+      <div class="page-body"><blockquote class="epigraph">"Um ETL só é confiável quando falha de forma visível — nunca de forma silenciosa."</blockquote>
+  <p>A diferença entre um pipeline amador e um profissional não está em nunca falhar — está em como a falha é
+  detectada, registrada e comunicada.</p>
+  <h3>Camadas de proteção de um ETL confiável</h3>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">camadas_etl.txt</div></div>
+  <pre class="code-body"><code>VALIDAÇÃO DE ENTRADA → TRATAMENTO COM REGRAS EXPLÍCITAS → VALIDAÇÃO DE SAÍDA
+  → LOG E ALERTA → CARGA</code></pre>
+</div>
+  <h3>Validação de entrada</h3>
+  <ul class="plain-list">
+    <li>Contagem de registros da fonte bate com o esperado?</li>
+    <li>Existem colunas obrigatórias vazias?</li>
+    <li>O formato de data está no padrão esperado?</li>
+    <li>Há duplicidade de chave na origem?</li>
+  </ul>
+  <h3>Tratamento de valores inesperados</h3>
+  <p>Toda regra de tratamento deveria ter um destino explícito para o que não se encaixa nela — nunca
+  descartar silenciosamente.</p>
+  <div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">tratamento_valores.sql</div></div>
+  <pre class="code-body"><code>CASE
+  WHEN REGEXP_LIKE(cpf, &#x27;^[0-9]{11}$&#x27;) THEN cpf
+  ELSE &#x27;CPF_INVALIDO&#x27;
+END AS cpf_validado</code></pre>
+</div><div class="info-box box-erro"><span class="tag">⚠️ Erro Comum</span><p>Aplicar um filtro de qualidade (WHERE cpf IS NOT NULL, por exemplo) sem registrar quantos e quais registros foram descartados. Semanas depois, alguém pergunta "por que faltam 200 clientes no relatório?" — e ninguém sabe responder.</p></div>
+  <h3>Log e alerta</h3>
+  <p>Todo fluxo de ETL deveria registrar, no mínimo: data/hora de execução, quantidade de registros
+  processados, quantidade de registros rejeitados e o motivo da rejeição.</p>
+  <div class="table-wrap"><table><thead><tr><th>Campo do log</th><th>Exemplo</th></tr></thead><tbody><tr><td>Execução</td><td>2026-07-19 03:00:12</td></tr><tr><td>Registros lidos</td><td>48.230</td></tr><tr><td>Registros carregados</td><td>48.114</td></tr><tr><td>Registros rejeitados</td><td>116</td></tr><tr><td>Motivo predominante</td><td>CPF fora do padrão (98 casos)</td></tr></tbody></table></div>
+  <h3>Validação de saída</h3>
+  <p>Antes de considerar a carga concluída, compare o resultado com uma expectativa mínima: a tabela final tem
+  uma quantidade de linhas plausível? As somas de valores batem com uma fonte de referência (por exemplo, o
+  total do sistema de origem)?</p>
+  <div class="info-box box-dica"><span class="tag">💡 Dica do Especialista</span><p>Crie uma consulta de "reconciliação" simples — comparando um total agregado da origem com o total agregado da tabela final — e rode automaticamente ao fim de cada execução. Ela é a rede de segurança mais barata que existe em um ETL.</p></div>
+  <h3>Checklist de tratamento de erros</h3>
+  <ul class="plain-list">
+    <li>✔ Todo dado rejeitado tem um destino e um motivo registrado</li>
+    <li>✔ O processo tem log com contagens de entrada, saída e rejeição</li>
+    <li>✔ Existe uma validação de reconciliação ao final da carga</li>
+    <li>✔ Falhas geram alerta visível — não silêncio</li>
+    <li>✔ O processo pode ser re-executado sem duplicar dados (idempotência)</li>
+  </ul>
+  <div class="resumo"><h4>Resumo do capítulo</h4><ul><li>Um ETL confiável falha de forma visível — nunca silenciosa.</li><li>Todo registro rejeitado precisa de destino e motivo registrados em log.</li><li>Uma consulta de reconciliação simples ao final da carga é a proteção mais barata contra erros não percebidos.</li></ul></div><div class="exercicios"><h4>🎯 Exercícios práticos</h4><ol><li>Escreva os campos mínimos de log que um ETL do seu trabalho deveria registrar, mas hoje não registra.</li><li>Desenhe uma consulta de reconciliação (comparação de totais) entre uma tabela de origem fictícia e uma tabela de destino.</li></ol></div></div>
+      <div class="chapter-nav"><a href="#cap-21" class="chapter-nav-btn" data-target="cap-21">← Anterior</a><a href="#apendice-a" class="chapter-nav-btn primary" data-target="apendice-a">Próximo →</a></div>
+    </article>
+    <article class="page" id="apendice-a" data-id="apendice-a">
+      <div class="page-eyebrow">Apêndices · Referência Rápida</div>
+      <h1>Apêndice A · Cheatsheet SQL</h1>
+      
+      <div class="page-body"><p>Referência rápida dos comandos e cláusulas mais usados no dia a dia — organizada no mesmo formato do Mapa Mental do Capítulo 6.</p><h3>Comandos por família</h3><div class="table-wrap"><table><thead><tr><th>Família</th><th>Comandos</th></tr></thead><tbody><tr><td>DDL</td><td>CREATE · ALTER · DROP · TRUNCATE</td></tr><tr><td>DML</td><td>SELECT · INSERT · UPDATE · DELETE</td></tr><tr><td>DCL</td><td>GRANT · REVOKE</td></tr><tr><td>TCL</td><td>COMMIT · ROLLBACK · SAVEPOINT</td></tr></tbody></table></div><h3>Cláusulas do SELECT</h3><div class="table-wrap"><table><thead><tr><th>Cláusula</th><th>Função</th></tr></thead><tbody><tr><td>WHERE</td><td>Filtra linhas antes do agrupamento</td></tr><tr><td>GROUP BY</td><td>Agrupa linhas para agregação</td></tr><tr><td>HAVING</td><td>Filtra grupos já agregados</td></tr><tr><td>ORDER BY</td><td>Ordena o resultado final (ASC / DESC)</td></tr><tr><td>JOIN</td><td>Combina tabelas (INNER, LEFT, RIGHT, FULL, CROSS)</td></tr></tbody></table></div><h3>Operadores de WHERE</h3><p>&lt; , &gt; , &lt;= , &gt;= , = , &lt;&gt; · AND, OR, NOT · BETWEEN · LIKE · IN · ANY · ALL · EXISTS</p><h3>Funções agregadas</h3><p>AVG() · SUM() · COUNT() · MIN() · MAX()</p><h3>Window functions</h3><p>OVER() · ROW_NUMBER() · RANK() · DENSE_RANK() · NTILE() · LAG() · LEAD()</p><h3>CTE</h3><div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">cte.sql</div></div>
+  <pre class="code-body"><code>WITH nome_cte AS (
+  SELECT ...
+)
+SELECT * FROM nome_cte;</code></pre>
+</div><h3>UNION × UNION ALL</h3><div class="table-wrap"><table><thead><tr><th>Comando</th><th>Remove duplicatas?</th><th>Performance</th></tr></thead><tbody><tr><td>UNION</td><td>Sim</td><td>Mais lento (precisa comparar registros)</td></tr><tr><td>UNION ALL</td><td>Não</td><td>Mais rápido</td></tr></tbody></table></div><h3>CASE</h3><div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">case.sql</div></div>
+  <pre class="code-body"><code>CASE
+  WHEN condição THEN valor
+  ELSE valor_padrao
+END</code></pre>
+</div></div>
+      <div class="chapter-nav"><a href="#cap-22" class="chapter-nav-btn" data-target="cap-22">← Anterior</a><a href="#apendice-b" class="chapter-nav-btn primary" data-target="apendice-b">Próximo →</a></div>
+    </article>
+    <article class="page" id="apendice-b" data-id="apendice-b">
+      <div class="page-eyebrow">Apêndices · Referência Rápida</div>
+      <h1>Apêndice B · Cheatsheet Oracle</h1>
+      
+      <div class="page-body"><p>Funções e comandos específicos de Oracle utilizados ao longo do livro.</p><h3>Funções de texto</h3><div class="table-wrap"><table><thead><tr><th>Função</th><th>Uso</th></tr></thead><tbody><tr><td>UPPER(campo)</td><td>Converte para maiúsculas</td></tr><tr><td>TRIM(campo)</td><td>Remove espaços no início e fim</td></tr><tr><td>REGEXP_REPLACE(campo, padrão, substituto)</td><td>Substitui padrões via expressão regular</td></tr><tr><td>TO_CHAR(número/data, formato)</td><td>Converte número ou data em texto formatado</td></tr></tbody></table></div><h3>Funções de número e data</h3><div class="table-wrap"><table><thead><tr><th>Função</th><th>Uso</th></tr></thead><tbody><tr><td>TO_NUMBER(texto)</td><td>Converte texto em número</td></tr><tr><td>TO_DATE(campo, 'YYYYMMDD')</td><td>Converte texto em data</td></tr><tr><td>TRUNC(data)</td><td>Remove a hora de um valor de data</td></tr><tr><td>SYSDATE</td><td>Data e hora atuais do servidor</td></tr><tr><td>NVL(campo, valor_padrao)</td><td>Substitui NULL por um valor padrão</td></tr></tbody></table></div><h3>DDL Oracle</h3><div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">ddl_oracle.sql</div></div>
+  <pre class="code-body"><code>CREATE TABLE tabela AS
+SELECT * FROM outra_tabela WHERE 1 = 0;
+
+ALTER TABLE tabela MODIFY (coluna VARCHAR2(200));
+ALTER TABLE tabela ADD (nova_coluna NUMBER);</code></pre>
+</div><h3>Padronização de chave textual (sequência recomendada)</h3><div class="code-window">
+  <div class="code-topbar"><span></span><span></span><span></span><div class="label">padronizacao.sql</div></div>
+  <pre class="code-body"><code>UPPER(
+  TRIM(
+    REGEXP_REPLACE(campo,&#x27;[[:space:]]+&#x27;,&#x27; &#x27;)
+  )
+)</code></pre>
+</div></div>
+      <div class="chapter-nav"><a href="#apendice-a" class="chapter-nav-btn" data-target="apendice-a">← Anterior</a><a href="#apendice-c" class="chapter-nav-btn primary" data-target="apendice-c">Próximo →</a></div>
+    </article>
+    <article class="page" id="apendice-c" data-id="apendice-c">
+      <div class="page-eyebrow">Apêndices · Referência Rápida</div>
+      <h1>Apêndice C · Checklist SQL</h1>
+      
+      <div class="page-body"><h3>Antes de escrever a consulta (Modelo 3C)</h3>
+  <ul class="plain-list">
+    <li>☐ Sei quem é o Cliente — quem está pedindo o dado.</li>
+    <li>☐ Sei o que a Consulta precisa responder.</li>
+    <li>☐ Sei o Contexto — de onde vem a informação.</li>
+  </ul><h3>Ao escrever</h3>
+  <ul class="plain-list">
+    <li>☐ Evitei SELECT * em ambiente produtivo.</li>
+    <li>☐ Usei WHERE em todo UPDATE e DELETE.</li>
+    <li>☐ Escolhi entre IN e EXISTS de forma consciente.</li>
+    <li>☐ Padronizei os dados antes de qualquer comparação ou JOIN.</li>
+  </ul><h3>Antes de entregar o resultado</h3>
+  <ul class="plain-list">
+    <li>☐ Validei a quantidade de registros do resultado.</li>
+    <li>☐ Testei com pelo menos um caso isolado.</li>
+    <li>☐ Documentei CTEs e subqueries complexas.</li>
+    <li>☐ Confirmei o resultado com quem conhece a regra de negócio.</li>
+  </ul></div>
+      <div class="chapter-nav"><a href="#apendice-b" class="chapter-nav-btn" data-target="apendice-b">← Anterior</a><a href="#apendice-d" class="chapter-nav-btn primary" data-target="apendice-d">Próximo →</a></div>
+    </article>
+    <article class="page" id="apendice-d" data-id="apendice-d">
+      <div class="page-eyebrow">Apêndices · Referência Rápida</div>
+      <h1>Apêndice D · Checklist ETL</h1>
+      
+      <div class="page-body"><h3>Extração</h3>
+  <ul class="plain-list">
+    <li>☐ Filtrei na origem, sem trazer volume desnecessário.</li>
+    <li>☐ Validei a coluna de partição (se aplicável).</li>
+    <li>☐ Conferi tipos de dado de fontes não estruturadas (Excel, API).</li>
+  </ul><h3>Transformação</h3>
+  <ul class="plain-list">
+    <li>☐ Toda regra de negócio está documentada.</li>
+    <li>☐ Valores fora do padrão têm destino e motivo registrados.</li>
+    <li>☐ Dados foram padronizados antes de qualquer JOIN.</li>
+  </ul><h3>Carga e monitoramento</h3>
+  <ul class="plain-list">
+    <li>☐ Existe log com contagem de entrada, saída e rejeição.</li>
+    <li>☐ Existe validação de reconciliação ao final da carga.</li>
+    <li>☐ O processo pode ser re-executado sem duplicar dados.</li>
+    <li>☐ Falhas geram alerta visível.</li>
+  </ul></div>
+      <div class="chapter-nav"><a href="#apendice-c" class="chapter-nav-btn" data-target="apendice-c">← Anterior</a><a href="#apendice-e" class="chapter-nav-btn primary" data-target="apendice-e">Próximo →</a></div>
+    </article>
+    <article class="page" id="apendice-e" data-id="apendice-e">
+      <div class="page-eyebrow">Apêndices · Referência Rápida</div>
+      <h1>Apêndice E · Templates Práticos</h1>
+      
+      <div class="page-body"><h3>Modelo — Relatório de Análise</h3><div class="table-wrap"><table><thead><tr><th>Campo</th><th>Preenchimento</th></tr></thead><tbody><tr><td>Nº do RA</td><td>Numeração sequencial do relatório</td></tr><tr><td>Fabricante / Fornecedor</td><td>Origem do item avaliado</td></tr><tr><td>Número de identificação</td><td>Código interno do item ou lote</td></tr><tr><td>Modelo</td><td>Modelo específico avaliado</td></tr><tr><td>Tipo de avaliação</td><td>Recebimento, periódica, auditoria etc.</td></tr><tr><td>Autor da análise</td><td>Responsável pelo relatório</td></tr></tbody></table></div><p>Estrutura: Metodologia → Avaliação → Resultado da inspeção → Não conformidades → Considerações → Recomendação.</p><h3>Modelo — Instrução de Trabalho (IT)</h3><div class="table-wrap"><table><thead><tr><th>Tipo</th><th>Função</th></tr></thead><tbody><tr><td>IT</td><td>Detalha as atividades a serem executadas, passo a passo</td></tr><tr><td>IV</td><td>Fotos ou ilustrações dos pontos de atenção</td></tr><tr><td>SA</td><td>Diretrizes específicas para configurar um sistema ou equipamento</td></tr></tbody></table></div><h3>Modelo — FCA (Fato, Causa, Ação)</h3><div class="table-wrap"><table><thead><tr><th>Fato</th><th>Causa</th><th>Ação</th></tr></thead><tbody><tr><td>O que foi observado</td><td>Por que aconteceu</td><td>O que será feito, por quem e até quando</td></tr></tbody></table></div><h3>Modelo — Log de Execução ETL</h3><div class="table-wrap"><table><thead><tr><th>Campo</th><th>Exemplo</th></tr></thead><tbody><tr><td>Execução</td><td>Data/hora</td></tr><tr><td>Registros lidos</td><td>Quantidade extraída da origem</td></tr><tr><td>Registros carregados</td><td>Quantidade efetivamente carregada</td></tr><tr><td>Registros rejeitados</td><td>Quantidade descartada</td></tr><tr><td>Motivo predominante</td><td>Principal causa de rejeição</td></tr></tbody></table></div></div>
+      <div class="chapter-nav"><a href="#apendice-d" class="chapter-nav-btn" data-target="apendice-d">← Anterior</a><a href="#referencias" class="chapter-nav-btn primary" data-target="referencias">Próximo →</a></div>
+    </article>
+    <article class="page" id="referencias" data-id="referencias">
+      <div class="page-eyebrow">Apêndices · Referência Rápida</div>
+      <h1>Referências</h1>
+      
+      <div class="page-body">
+  <p>Este livro reúne experiência prática de mercado com conceitos consolidados da literatura técnica e de
+  gestão da qualidade. As principais referências conceituais utilizadas são:</p>
+  <ul class="plain-list">
+    <li>DEMING, W. Edwards. <i>Out of the Crisis.</i> Cambridge: MIT Press, 2000. (Base conceitual do ciclo PDCA, Capítulo 4.)</li>
+    <li>ISHIKAWA, Kaoru. <i>Guide to Quality Control.</i> Tokyo: Asian Productivity Organization, 1976. (Base do Diagrama de Causa e Efeito, Capítulo 4.)</li>
+    <li>NONAKA, Ikujiro; TAKEUCHI, Hirotaka. <i>The Knowledge-Creating Company.</i> Nova York: Oxford University Press, 1995. (Base do modelo SECI / Espiral do Conhecimento, Capítulo 4.)</li>
+    <li>CODD, E. F. <i>A Relational Model of Data for Large Shared Data Banks.</i> Communications of the ACM, 1970. (Fundamento teórico do modelo relacional e da linguagem SQL.)</li>
+    <li>Documentação oficial Oracle Database SQL Language Reference. Oracle Corporation. (Referência de sintaxe SQL utilizada nos exemplos técnicos.)</li>
+    <li>Documentação oficial KNIME Analytics Platform. KNIME AG. (Referência de arquitetura de fluxos ETL visuais.)</li>
+  </ul>
+  <p>Exemplos, estudos de caso, templates e a estrutura pedagógica do livro são de autoria própria, desenvolvidos
+  a partir da experiência profissional do autor.</p>
+  </div>
+      <div class="chapter-nav"><a href="#apendice-e" class="chapter-nav-btn" data-target="apendice-e">← Anterior</a></div>
+    </article>
+    </main>
+  </div>
+
+<script>
+
+  const TOTAL = 32;
+  const STORAGE_KEY = 'aap_progress';
+
+  function getDone(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }catch(e){ return {}; }
+  }
+  function setDone(map){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(map)); }catch(e){}
+  }
+  function updateProgressUI(){
+    const done = getDone();
+    const count = Object.values(done).filter(Boolean).length;
+    document.getElementById('progressLabel').textContent = count + ' / ' + TOTAL + ' concluídos';
+    document.getElementById('progressFill').style.width = Math.round((count/TOTAL)*100) + '%';
+    document.querySelectorAll('.nav-link').forEach(a => {
+      const id = a.getAttribute('data-target');
+      a.classList.toggle('done', !!done[id]);
+    });
+  }
+
+  function showPage(id){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+    const target = document.getElementById(id);
+    if(!target) return;
+    target.classList.add('active');
+    const link = document.querySelector('.nav-link[data-target="'+id+'"]');
+    if(link) link.classList.add('active');
+
+    // marca automaticamente como concluído ao visitar
+    const done = getDone();
+    done[id] = true;
+    setDone(done);
+    updateProgressUI();
+
+    document.getElementById('content').scrollTo({top:0, behavior:'instant'});
+    window.scrollTo({top:0, behavior:'instant'});
+    closeSidebarMobile();
+  }
+
+  function router(){
+    const id = location.hash ? location.hash.slice(1) : 'capa';
+    showPage(id);
+  }
+
+  window.addEventListener('hashchange', router);
+  document.addEventListener('DOMContentLoaded', () => {
+    router();
+    updateProgressUI();
+  });
+
+  // Sidebar mobile
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('show');
+  });
+  overlay.addEventListener('click', closeSidebarMobile);
+  function closeSidebarMobile(){
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  }
+
+</script>
+</body>
+</html>
